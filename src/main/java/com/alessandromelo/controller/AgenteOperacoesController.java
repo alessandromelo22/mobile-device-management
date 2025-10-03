@@ -6,6 +6,7 @@ import com.alessandromelo.dto.agenteoperacoes.buscarcomandospendentes.BuscarComa
 import com.alessandromelo.entity.Agente;
 import com.alessandromelo.enums.AgenteStatus;
 import com.alessandromelo.service.AgenteOperacoesService;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,22 +22,24 @@ public class AgenteOperacoesController {
         this.agenteOperacoesService = agenteOperacoesService;
     }
 
-
-    /*
-
-- Talvez  criar um DTO especifico para cada endpoint (metodo)
-
-
- */
-//Atualiza status, dataUltimaAtividade, ipUltimo, versao.
+    /**
+     * Usado pelo próprio Agente como um heartbeat
+     * @param agenteId
+     * @param requestDTO
+     * @return
+     */
     @PutMapping("/status")
     public ResponseEntity<AtualizarStatusResponseDTO> atualizarStatus(@PathVariable Long agenteId,
-                                                                                 @RequestBody AtualizarStatusRequestDTO requestDTO){
+                                                                      @RequestBody @Valid AtualizarStatusRequestDTO requestDTO){
 
         return ResponseEntity.ok(this.agenteOperacoesService.atualizarStatus(agenteId,requestDTO));
     }
 
-
+    /**
+     * O Agente chama esse endpoint para buscar quais comandos estão PENDENTES
+     * @param agenteId
+     * @return
+     */
 // O agente consulta quais ordens precisa executar (ex: bloquear tela).
     @GetMapping("/comandos-pendentes")
     public ResponseEntity<BuscarComandosPendentesResponseDTO> buscarComandosPendentes(@PathVariable Long agenteId){

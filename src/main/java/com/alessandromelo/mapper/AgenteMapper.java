@@ -2,9 +2,13 @@ package com.alessandromelo.mapper;
 
 import com.alessandromelo.dto.agente.AgenteRequestDTO;
 import com.alessandromelo.dto.agente.AgenteResponseDTO;
+import com.alessandromelo.dto.agente.AgenteResumoResponseDTO;
 import com.alessandromelo.dto.dispositivo.DispositivoResumoResponseDTO;
 import com.alessandromelo.entity.Agente;
+import com.alessandromelo.enums.AgenteStatus;
 import org.springframework.stereotype.Component;
+
+import java.time.LocalDateTime;
 
 @Component
 public class AgenteMapper {
@@ -14,10 +18,11 @@ public class AgenteMapper {
     public Agente toEntity(AgenteRequestDTO agenteRequestDTO){
 
         Agente agente = new Agente();
+
         agente.setVersao(agenteRequestDTO.getVersao());
-        agente.setStatus(agenteRequestDTO.getStatus());
+        agente.setStatus(AgenteStatus.ATIVO); //setta o status como ATIVO por padrão
         agente.setLog(agenteRequestDTO.getLog());
-        agente.setDataUltimaAtividade(agenteRequestDTO.getDataUltimaAtividade());
+        agente.setDataUltimaAtividade(LocalDateTime.now()); //setta a data e hora atual da chamada
 
         return agente;
     }
@@ -27,6 +32,7 @@ public class AgenteMapper {
     public AgenteResponseDTO toResponseDTO(Agente agente){
 
         AgenteResponseDTO agenteResponseDTO = new AgenteResponseDTO();
+
         agenteResponseDTO.setId(agente.getId());
         agenteResponseDTO.setVersao(agente.getVersao());
         agenteResponseDTO.setStatus(agente.getStatus());
@@ -46,4 +52,16 @@ public class AgenteMapper {
         return agenteResponseDTO;
     }
 
+
+    //Entity -> ResumoResponseDTO
+    public AgenteResumoResponseDTO toResumoResponseDTO(Agente agente){
+
+        AgenteResumoResponseDTO agenteResumoResponseDTO = new AgenteResumoResponseDTO();
+
+        agenteResumoResponseDTO.setId(agente.getId());
+        agenteResumoResponseDTO.setStatus(agente.getStatus());
+        agenteResumoResponseDTO.setDataUltimaAtividade(agente.getDataUltimaAtividade());
+
+        return agenteResumoResponseDTO;
+    }
 }

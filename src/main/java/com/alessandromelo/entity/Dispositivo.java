@@ -21,7 +21,7 @@ public class Dispositivo {
     @Enumerated(EnumType.STRING)
     private DispositivoStatus status; //enum (ATIVO, INATIVO, EM_MANUTENCAO, DESCARTADO)
     private LocalDate dataAquisicao;
-    private LocalDateTime dataUltimaAtualizacao;
+    private LocalDateTime dataUltimaAtualizacao; //atualização do SO
     private String observacoes;
 
     @ManyToOne

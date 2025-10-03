@@ -13,8 +13,10 @@ public class Agente {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String versao;
+
     @Enumerated(EnumType.STRING)
     private AgenteStatus status; // enum (ATIVO, INATIVO, EM_EXECUCAO)
+
     private String log; // Log de execução do agente
     private LocalDateTime dataUltimaAtividade;
 //  private String ip;

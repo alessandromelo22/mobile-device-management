@@ -1,29 +1,27 @@
 package com.alessandromelo.dto.agenteoperacoes.atualizarstatus;
 
+import com.alessandromelo.enums.AgenteStatus;
+
+import java.time.LocalDateTime;
+
 public class AtualizarStatusResponseDTO {
 
     private Long id;
-    private Boolean sucesso; //indica sucesso ou não
-    private String mensagem; //Mensagem indicando sucesso ou falha
+    private String versao;
+    private AgenteStatus status;
+    private LocalDateTime dataUltimaAtividade;
+
 
 
     public AtualizarStatusResponseDTO() {
     }
 
-    public AtualizarStatusResponseDTO(Long id) {
+    public AtualizarStatusResponseDTO(Long id, String versao, AgenteStatus status, LocalDateTime dataUltimaAtividade) {
         this.id = id;
-        this.sucesso = true;
-        this.mensagem = "Status do agente atualizado com sucesso";
+        this.versao = versao;
+        this.status = status;
+        this.dataUltimaAtividade = dataUltimaAtividade;
     }
-
-    public AtualizarStatusResponseDTO(Long id, Boolean sucesso, String mensagem) {
-        this.id = id;
-        this.sucesso = sucesso;
-        this.mensagem = mensagem;
-    }
-
-
-
 
     public Long getId() {
         return id;
@@ -33,19 +31,27 @@ public class AtualizarStatusResponseDTO {
         this.id = id;
     }
 
-    public Boolean getSucesso() {
-        return sucesso;
+    public String getVersao() {
+        return versao;
     }
 
-    public void setSucesso(Boolean sucesso) {
-        this.sucesso = sucesso;
+    public void setVersao(String versao) {
+        this.versao = versao;
     }
 
-    public String getMensagem() {
-        return mensagem;
+    public AgenteStatus getStatus() {
+        return status;
     }
 
-    public void setMensagem(String mensagem) {
-        this.mensagem = mensagem;
+    public void setStatus(AgenteStatus status) {
+        this.status = status;
+    }
+
+    public LocalDateTime getDataUltimaAtividade() {
+        return dataUltimaAtividade;
+    }
+
+    public void setDataUltimaAtividade(LocalDateTime dataUltimaAtividade) {
+        this.dataUltimaAtividade = dataUltimaAtividade;
     }
 }

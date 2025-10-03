@@ -4,6 +4,7 @@ import com.alessandromelo.dto.comando.ComandoRequestDTO;
 import com.alessandromelo.dto.comando.ComandoResponseDTO;
 import com.alessandromelo.enums.ComandoStatus;
 import com.alessandromelo.service.ComandoService;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -36,17 +37,17 @@ public class ComandoController {
     }
 
     @PostMapping
-    public ResponseEntity<ComandoResponseDTO> criarComando(@RequestBody ComandoRequestDTO novoComandoDTO){
+    public ResponseEntity<ComandoResponseDTO> criarComando(@RequestBody @Valid ComandoRequestDTO novoComandoDTO){
 
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(this.comandoService.criarComando(novoComandoDTO));
     }
 
 
-    //TEMPORÁRIO
-    @DeleteMapping("/{comandoId}")
-    public ResponseEntity<Void> deletarComando(@PathVariable Long comandoId){
-        this.comandoService.deletarComando(comandoId);
-        return ResponseEntity.noContent().build();
-    }
+////TEMPORÁRIO: SÓ PARA TESTES
+//    @DeleteMapping("/{comandoId}")
+//    public ResponseEntity<Void> deletarComando(@PathVariable Long comandoId){
+//        this.comandoService.deletarComando(comandoId);
+//        return ResponseEntity.noContent().build();
+//    }
 }

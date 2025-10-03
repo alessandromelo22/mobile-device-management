@@ -37,7 +37,7 @@ public class DispositivoService {
 
 
 
-//Listar todos os dispositivos: (CERTO)
+//Listar todos os dispositivos:
     public List<DispositivoResponseDTO> listarTodosDispositivos(){
 
         List<Dispositivo> dispositivos = this.dispositivoRepository.findAll();
@@ -45,7 +45,7 @@ public class DispositivoService {
     }
 
 
-//Buscar Dispositivo por Id: (CERTO)
+//Buscar Dispositivo por Id:
     public DispositivoResponseDTO buscarDispositivoPorId(Long dispositivoId){
 
         Dispositivo dispositivo = this.dispositivoRepository.findById(dispositivoId)
@@ -54,7 +54,7 @@ public class DispositivoService {
         return this.dispositivoMapper.toResponseDTO(dispositivo);
     }
 
-//Cadastrar Dispositivo: (CERTO)
+//Cadastrar Dispositivo:
     public DispositivoResponseDTO cadastrarNovoDispositivo(DispositivoRequestDTO novoDispositivoDTO){
 
         boolean numeroSerieExistente = this.dispositivoRepository.existsByNumeroSerie(novoDispositivoDTO.getNumeroSerie());

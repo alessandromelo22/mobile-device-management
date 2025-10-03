@@ -1,24 +1,20 @@
 package com.alessandromelo.dto.agenteoperacoes.atualizarstatus;
 
-import com.alessandromelo.enums.AgenteStatus;
-
-import java.time.LocalDateTime;
+import jakarta.validation.constraints.NotBlank;
 
 public class AtualizarStatusRequestDTO {
-
+    @NotBlank(message = "O Agente deve informar a versão!")
     private String versao;
-    private AgenteStatus status;
-    private LocalDateTime dataUltimaAtividade;
+
 
 
     public AtualizarStatusRequestDTO() {
     }
 
-    public AtualizarStatusRequestDTO(String versao, AgenteStatus status, LocalDateTime dataUltimaAtividade) {
+    public AtualizarStatusRequestDTO(String versao) {
         this.versao = versao;
-        this.status = status;
-        this.dataUltimaAtividade = dataUltimaAtividade;
     }
+
 
     public String getVersao() {
         return versao;
@@ -28,19 +24,4 @@ public class AtualizarStatusRequestDTO {
         this.versao = versao;
     }
 
-    public AgenteStatus getStatus() {
-        return status;
-    }
-
-    public void setStatus(AgenteStatus status) {
-        this.status = status;
-    }
-
-    public LocalDateTime getDataUltimaAtividade() {
-        return dataUltimaAtividade;
-    }
-
-    public void setDataUltimaAtividade(LocalDateTime dataUltimaAtividade) {
-        this.dataUltimaAtividade = dataUltimaAtividade;
-    }
 }

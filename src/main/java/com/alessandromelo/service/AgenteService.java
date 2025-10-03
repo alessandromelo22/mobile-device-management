@@ -2,8 +2,10 @@ package com.alessandromelo.service;
 
 import com.alessandromelo.dto.agente.AgenteRequestDTO;
 import com.alessandromelo.dto.agente.AgenteResponseDTO;
+import com.alessandromelo.dto.agente.AgenteResumoResponseDTO;
 import com.alessandromelo.entity.Agente;
 import com.alessandromelo.entity.Dispositivo;
+import com.alessandromelo.enums.AgenteStatus;
 import com.alessandromelo.exception.agente.AgenteNaoEncontradoException;
 import com.alessandromelo.exception.dispositivo.DispositivoNaoEncontradoException;
 import com.alessandromelo.mapper.AgenteMapper;
@@ -11,6 +13,7 @@ import com.alessandromelo.repository.AgenteRepository;
 import com.alessandromelo.repository.DispositivoRepository;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 
@@ -50,6 +53,18 @@ public class AgenteService {
         return this.agenteMapper.toResponseDTO(agente);
     }
 
+
+//Buscar por status
+
+    public List<AgenteResponseDTO> buscarAgentesPorStatus(AgenteStatus status){
+
+        List<Agente> agentes = this.agenteRepository.findByStatus(status);
+        return agentes.stream().map(this.agenteMapper::toResponseDTO).toList();
+    }
+
+
+
+
 //Cadastrar novo Agente
     public AgenteResponseDTO cadastrarNovoAgente(AgenteRequestDTO novoAgenteDTO) {
 
@@ -72,9 +87,8 @@ public class AgenteService {
                 .map(agente -> {
 
                     agente.setVersao(agenteAtualizadoDTO.getVersao());
-                    agente.setStatus(agenteAtualizadoDTO.getStatus());
                     agente.setLog(agenteAtualizadoDTO.getLog());
-                    agente.setDataUltimaAtividade(agenteAtualizadoDTO.getDataUltimaAtividade());
+                    agente.setDataUltimaAtividade(LocalDateTime.now()); //setta a data e hora atual da chamada
 
                     if(agenteAtualizadoDTO.getDispositivoId() != null){
 
@@ -90,7 +104,34 @@ public class AgenteService {
 
 
 //Desativar Agente
+    public AgenteResumoResponseDTO desativarAgente(Long agenteId){
 
+        return this.agenteRepository.findById(agenteId)
+                .map(agente -> {
+
+                    agente.setStatus(AgenteStatus.INATIVO);
+                    agente.setDataUltimaAtividade(LocalDateTime.now()); //setta a data e hora atual da chamada desse endpoint
+
+                    return this.agenteMapper.toResumoResponseDTO(this.agenteRepository.save(agente));
+
+                }).orElseThrow(() -> new AgenteNaoEncontradoException(agenteId));
+
+    }
+
+
+//Ativar Agente:
+    public AgenteResumoResponseDTO ativarAgente(Long agenteId){
+
+        return this.agenteRepository.findById(agenteId)
+                .map(agente -> {
+
+                    agente.setStatus(AgenteStatus.ATIVO);
+                    agente.setDataUltimaAtividade(LocalDateTime.now()); //setta a data e hora atual da chamada desse endpoint
+
+                    return this.agenteMapper.toResumoResponseDTO(this.agenteRepository.save(agente));
+
+                }).orElseThrow(() -> new AgenteNaoEncontradoException(agenteId));
+    }
 
 
 

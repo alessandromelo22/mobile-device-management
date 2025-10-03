@@ -10,10 +10,10 @@ import java.util.Optional;
 
 public interface ComandoRepository extends JpaRepository<Comando, Long> {
 
-    //retorna todos os comandos de um tipo especifico de um Agente especifico, ordenados pela data de criação em ordem crescente
+    //retorna todos os comandos de um Status especifico de um Agente especifico, ordenados pela data de criação em ordem crescente
     List<Comando> findByAgenteIdAndStatusOrderByDataCriacaoAsc(Long agenteId, ComandoStatus status);
 
-    //retorna todos os comandos de um tipo especifico
+    //retorna todos os comandos de um Status especifico
     List<Comando> findByStatus(ComandoStatus status);
 
     //Aparentemente não há necessidade de métodos de validação
