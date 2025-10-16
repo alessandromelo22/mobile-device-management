@@ -68,21 +68,10 @@ public class UsuarioService {
         return this.usuarioMapper.toResponseDTO(usuario);
     }
 
-    /*
 
-cadastraNovoUsuario(UsuarioRequestDTO novoUsuarioDTO):
 
-    1- Faço uma verificação para ver se há dados duplicados
 
-    2- Realizo mapeamento do RequestDTO recebido para uma entidade Usuario
-
-    3- Se o id do Departamento for informaddo no UsuarioRequestDTO,
-    busco no banco pelo departamento, caso contrário será nulo
-
-    4- Depois de buscar eu setto o departamento dentro da entidade Usuario
-
-     */
-
+//Cadastrar novo Usuario:
     public UsuarioResponseDTO cadastrarNovoUsuario(UsuarioRequestDTO novoUsuarioDTO){
         //1
         boolean emailJaExiste = this.usuarioRepository.existsByEmail(novoUsuarioDTO.getEmail());
@@ -157,7 +146,7 @@ cadastraNovoUsuario(UsuarioRequestDTO novoUsuarioDTO):
     }
 
 //Listar Dispositivos cadastrados em um determinado Usuario   (CERTO)
-    public List<DispositivoResumoResponseDTO> listarDispositivosCadastradosEmUmUsuario(Long usuarioId){
+    public List<DispositivoResumoResponseDTO> listarDispositivosVinculadosAoUsuario(Long usuarioId){
 
         List<Dispositivo> dispositivos = this.usuarioRepository.findById(usuarioId).map(Usuario::getDispositivos)
                 .orElseThrow(() -> new UsuarioNaoEncontradoException(usuarioId));

@@ -18,6 +18,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -30,7 +31,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(UsuarioNaoEncontradoException.class)
     public ResponseEntity<ApiError> handleUsuarioNaoEncontradoException (UsuarioNaoEncontradoException ex,
                                                                          HttpServletRequest request){
-
+        //404
         ApiError error = new ApiError(HttpStatus.NOT_FOUND, ex.getMessage(), request.getRequestURI());
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
     }
@@ -57,7 +58,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(DispositivoNaoEncontradoException.class)
     public ResponseEntity<ApiError> handleDispositivoNaoEncontradoExcetion (DispositivoNaoEncontradoException ex,
                                                                             HttpServletRequest request){
-
+        //404
         ApiError error = new ApiError(HttpStatus.NOT_FOUND, ex.getMessage(), request.getRequestURI());
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
     }
@@ -75,7 +76,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(DepartamentoNaoEncontradoException.class)
     public ResponseEntity<ApiError> handleDepartamentoNaoEncontradoException(DepartamentoNaoEncontradoException ex,
                                                                              HttpServletRequest request){
-
+        //404
         ApiError error = new ApiError(HttpStatus.NOT_FOUND, ex.getMessage(), request.getRequestURI());
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
     }
@@ -140,8 +141,20 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.CONFLICT).body(error);
     }
 
+    @ExceptionHandler(MethodArgumentTypeMismatchException.class)
+    public ResponseEntity<ApiError> handleMethodArgumentTypeMismatchException(MethodArgumentTypeMismatchException ex,
+                                                                              HttpServletRequest request){
 
-///////VALIDAÇÃO:
+        String mensagemDeErro = String.format("O valor '%s' não é válido para '%s'. Esperado um valor do tipo '%s'",
+        ex.getValue(), ex.getName(), ex.getRequiredType().getSimpleName());
+
+        //400
+        ApiError error = new ApiError(HttpStatus.BAD_REQUEST, mensagemDeErro, request.getRequestURI());
+
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
+    }
+
+///////VALIDAÇÃO (Bean Validation):
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ApiError> handleValidationException(MethodArgumentNotValidException ex,
@@ -152,8 +165,7 @@ public class GlobalExceptionHandler {
                         .getDefaultMessage()).collect(Collectors.joining(" | "));
 
         //400
-        ApiError error = new ApiError(HttpStatus.BAD_REQUEST, request.getRequestURI());
-        error.setMessage(mensagensDeErros);
+        ApiError error = new ApiError(HttpStatus.BAD_REQUEST,mensagensDeErros, request.getRequestURI());
 
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
     }

@@ -24,12 +24,7 @@ public class ApiError {
         this.timestamp = LocalDateTime.now();
     }
 
-    public ApiError(HttpStatus status, String path) {
-        this.status = status.value();
-        this.error = status.getReasonPhrase();
-        this.path = path;
-        this.timestamp = LocalDateTime.now();
-    }
+
 
 
 

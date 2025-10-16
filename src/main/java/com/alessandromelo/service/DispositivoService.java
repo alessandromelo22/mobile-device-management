@@ -2,6 +2,7 @@ package com.alessandromelo.service;
 
 import com.alessandromelo.dto.dispositivo.DispositivoRequestDTO;
 import com.alessandromelo.dto.dispositivo.DispositivoResponseDTO;
+import com.alessandromelo.enums.DispositivoStatus;
 import com.alessandromelo.exception.dispositivo.DispositivoNaoEncontradoException;
 import com.alessandromelo.exception.dispositivo.NumeroDeSerieJaCadastradoException;
 import com.alessandromelo.exception.global.EntidadeEmUsoException;
@@ -41,7 +42,7 @@ public class DispositivoService {
     public List<DispositivoResponseDTO> listarTodosDispositivos(){
 
         List<Dispositivo> dispositivos = this.dispositivoRepository.findAll();
-        return dispositivos.stream().map(dispositivoMapper::toResponseDTO).toList();
+        return dispositivos.stream().map(this.dispositivoMapper::toResponseDTO).toList();
     }
 
 
@@ -53,6 +54,15 @@ public class DispositivoService {
 
         return this.dispositivoMapper.toResponseDTO(dispositivo);
     }
+
+//Buscar Dispositivos por Status:
+    public List<DispositivoResponseDTO> buscarDispositivosPorStatus(DispositivoStatus status){
+
+        List<Dispositivo> dispositivos = this.dispositivoRepository.findByStatus(status);
+        return dispositivos.stream().map(this.dispositivoMapper::toResponseDTO).toList();
+    }
+
+
 
 //Cadastrar Dispositivo:
     public DispositivoResponseDTO cadastrarNovoDispositivo(DispositivoRequestDTO novoDispositivoDTO){

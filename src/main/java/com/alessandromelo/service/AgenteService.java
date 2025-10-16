@@ -63,8 +63,6 @@ public class AgenteService {
     }
 
 
-
-
 //Cadastrar novo Agente
     public AgenteResponseDTO cadastrarNovoAgente(AgenteRequestDTO novoAgenteDTO) {
 
