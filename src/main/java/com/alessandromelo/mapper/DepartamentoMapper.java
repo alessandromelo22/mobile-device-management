@@ -3,31 +3,17 @@ package com.alessandromelo.mapper;
 import com.alessandromelo.dto.departamento.DepartamentoRequestDTO;
 import com.alessandromelo.dto.departamento.DepartamentoResponseDTO;
 import com.alessandromelo.entity.Departamento;
-import org.springframework.stereotype.Component;
+import org.mapstruct.Mapper;
 
-@Component
-public class DepartamentoMapper {
+@Mapper(componentModel = "spring")
+public interface DepartamentoMapper {
 
-    //RequestDTO -> Entity:
-    public Departamento toEntity(DepartamentoRequestDTO departamentoRequestDTO){
+    //Request -> Entity
+    Departamento toEntity(DepartamentoRequestDTO departamentoRequestDTO);
 
-        Departamento departamento = new Departamento();
+    //Entity -> Response
+    DepartamentoResponseDTO toResponseDTO(Departamento departamento);
 
-        departamento.setNome(departamentoRequestDTO.getNome());
-        departamento.setSigla(departamentoRequestDTO.getSigla());
 
-        return departamento;
-    }
 
-    //Entity -> ResponseDTO
-    public DepartamentoResponseDTO toResponseDTO(Departamento departamento){
-
-        DepartamentoResponseDTO departamentoResponseDTO = new DepartamentoResponseDTO();
-
-        departamentoResponseDTO.setId(departamento.getId());
-        departamentoResponseDTO.setNome(departamento.getNome());
-        departamentoResponseDTO.setSigla(departamento.getSigla());
-
-        return departamentoResponseDTO;
-    }
 }

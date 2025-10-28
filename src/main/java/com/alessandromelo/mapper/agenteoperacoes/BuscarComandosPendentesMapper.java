@@ -1,32 +1,20 @@
 package com.alessandromelo.mapper.agenteoperacoes;
 
 import com.alessandromelo.dto.agenteoperacoes.buscarcomandospendentes.BuscarComandosPendentesResponseDTO;
-import com.alessandromelo.dto.comando.ComandoResumoResponseDTO;
 import com.alessandromelo.entity.Comando;
 import com.alessandromelo.mapper.ComandoMapper;
-import org.springframework.stereotype.Component;
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 
 import java.util.List;
 
-@Component
-public class BuscarComandosPendentesMapper {
+@Mapper(componentModel = "spring", uses = {ComandoMapper.class})
+public interface BuscarComandosPendentesMapper {
 
-    private ComandoMapper comandoMapper;
+    //Entity
+    @Mapping(source = "agenteId", target = "agenteId")
+    @Mapping(source = "comandos", target = "comandosResumoResponseDTO")
+    BuscarComandosPendentesResponseDTO toResponseDTO(Long agenteId, List<Comando> comandos);
 
-
-    public BuscarComandosPendentesMapper(ComandoMapper comandoMapper) {
-        this.comandoMapper = comandoMapper;
-    }
-
-
-
-    //toResponseDTO
-    public BuscarComandosPendentesResponseDTO toResponseDTO(Long agenteId, List<Comando> comandos){
-
-        List<ComandoResumoResponseDTO> comandosResumoDTO = comandos.stream()
-                .map(comando -> this.comandoMapper.toResumoResponseDTO(comando))
-                .toList();
-
-        return new BuscarComandosPendentesResponseDTO(agenteId, comandosResumoDTO);
-    }
+    //acho que ta certo, conferir o comando dps
 }

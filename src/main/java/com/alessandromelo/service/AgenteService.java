@@ -8,7 +8,6 @@ import com.alessandromelo.entity.Dispositivo;
 import com.alessandromelo.enums.AgenteStatus;
 import com.alessandromelo.exception.agente.AgenteNaoEncontradoException;
 import com.alessandromelo.exception.dispositivo.DispositivoNaoEncontradoException;
-import com.alessandromelo.mapper.AgegenteMapper;
 import com.alessandromelo.mapper.AgenteMapper;
 import com.alessandromelo.repository.AgenteRepository;
 import com.alessandromelo.repository.DispositivoRepository;
@@ -26,14 +25,14 @@ import java.util.List;
 public class AgenteService {
 
     private AgenteRepository agenteRepository;
-    private AgegenteMapper agegenteMapper;
+    private AgenteMapper agenteMapper;
 
     private DispositivoRepository dispositivoRepository;
 
 
-    public AgenteService(AgenteRepository agenteRepository, AgegenteMapper agegenteMapper, DispositivoRepository dispositivoRepository) {
+    public AgenteService(AgenteRepository agenteRepository, AgenteMapper agenteMapper, DispositivoRepository dispositivoRepository) {
         this.agenteRepository = agenteRepository;
-        this.agegenteMapper = agegenteMapper;
+        this.agenteMapper = agenteMapper;
         this.dispositivoRepository = dispositivoRepository;
     }
 
@@ -41,7 +40,7 @@ public class AgenteService {
     public List<AgenteResponseDTO> listarTodosAgentes() {
 
         List<Agente> agentes = this.agenteRepository.findAll();
-        return agentes.stream().map(agegenteMapper::toResponseDTO).toList();
+        return agentes.stream().map(agenteMapper::toResponseDTO).toList();
     }
 
 //Buscar por Id
@@ -50,7 +49,7 @@ public class AgenteService {
         Agente agente = this.agenteRepository.findById(agenteId)
                 .orElseThrow(() -> new AgenteNaoEncontradoException(agenteId));
 
-        return this.agegenteMapper.toResponseDTO(agente);
+        return this.agenteMapper.toResponseDTO(agente);
     }
 
 
@@ -59,14 +58,14 @@ public class AgenteService {
     public List<AgenteResponseDTO> buscarAgentesPorStatus(AgenteStatus status){
 
         List<Agente> agentes = this.agenteRepository.findByStatus(status);
-        return agentes.stream().map(this.agegenteMapper::toResponseDTO).toList();
+        return agentes.stream().map(this.agenteMapper::toResponseDTO).toList();
     }
 
 
 //Cadastrar novo Agente
     public AgenteResponseDTO cadastrarNovoAgente(AgenteRequestDTO novoAgenteDTO) {
 
-        Agente agente = this.agegenteMapper.toEntity(novoAgenteDTO);
+        Agente agente = this.agenteMapper.toEntity(novoAgenteDTO);
 
         if(novoAgenteDTO.getDispositivoId() != null){
 
@@ -75,7 +74,7 @@ public class AgenteService {
 
             agente.setDispositivo(dispositivo);
         }
-        return this.agegenteMapper.toResponseDTO(this.agenteRepository.save(agente));
+        return this.agenteMapper.toResponseDTO(this.agenteRepository.save(agente));
     }
 
 //Atualizar Agente CRUD:
@@ -95,7 +94,7 @@ public class AgenteService {
 
                         agente.setDispositivo(dispositivo);
                     }
-                    return this.agegenteMapper.toResponseDTO(this.agenteRepository.save(agente));
+                    return this.agenteMapper.toResponseDTO(this.agenteRepository.save(agente));
 
                 }).orElseThrow(() -> new AgenteNaoEncontradoException(agenteId));
     }
@@ -110,7 +109,7 @@ public class AgenteService {
                     agente.setStatus(AgenteStatus.INATIVO);
                     agente.setDataUltimaAtividade(LocalDateTime.now()); //setta a data e hora atual da chamada desse endpoint
 
-                    return this.agegenteMapper.toResumoResponseDTO(this.agenteRepository.save(agente));
+                    return this.agenteMapper.toResumoResponseDTO(this.agenteRepository.save(agente));
 
                 }).orElseThrow(() -> new AgenteNaoEncontradoException(agenteId));
 
@@ -126,7 +125,7 @@ public class AgenteService {
                     agente.setStatus(AgenteStatus.ATIVO);
                     agente.setDataUltimaAtividade(LocalDateTime.now()); //setta a data e hora atual da chamada desse endpoint
 
-                    return this.agegenteMapper.toResumoResponseDTO(this.agenteRepository.save(agente));
+                    return this.agenteMapper.toResumoResponseDTO(this.agenteRepository.save(agente));
 
                 }).orElseThrow(() -> new AgenteNaoEncontradoException(agenteId));
     }

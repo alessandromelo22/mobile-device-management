@@ -10,9 +10,7 @@ import com.alessandromelo.entity.Comando;
 import com.alessandromelo.enums.ComandoStatus;
 import com.alessandromelo.exception.agente.AgenteNaoEncontradoException;
 import com.alessandromelo.mapper.agenteoperacoes.AtualizarStatusMapper;
-import com.alessandromelo.mapper.agenteoperacoes.AtutualizarStatusMapper;
 import com.alessandromelo.mapper.agenteoperacoes.BuscarComandosPendentesMapper;
-import com.alessandromelo.mapper.agenteoperacoes.BususcarComandosPendentesMapper;
 import com.alessandromelo.repository.AgenteRepository;
 import com.alessandromelo.repository.ComandoRepository;
 import org.springframework.stereotype.Service;
@@ -31,16 +29,16 @@ public class AgenteOperacoesService {
 
 
     private AgenteRepository agenteRepository;
-    private AtutualizarStatusMapper atutualizarStatusMapper;
+    private AtualizarStatusMapper atualizarStatusMapper;
 
     private ComandoRepository comandoRepository;
-    private BususcarComandosPendentesMapper bususcarComandosPendentesMapper;
+    private BuscarComandosPendentesMapper buscarComandosPendentesMapper;
 
-    public AgenteOperacoesService(AgenteRepository agenteRepository, AtutualizarStatusMapper atutualizarStatusMapper, ComandoRepository comandoRepository, BususcarComandosPendentesMapper bususcarComandosPendentesMapper) {
+    public AgenteOperacoesService(AgenteRepository agenteRepository, AtualizarStatusMapper atualizarStatusMapper, ComandoRepository comandoRepository, BuscarComandosPendentesMapper buscarComandosPendentesMapper) {
         this.agenteRepository = agenteRepository;
-        this.atutualizarStatusMapper = atutualizarStatusMapper;
+        this.atualizarStatusMapper = atualizarStatusMapper;
         this.comandoRepository = comandoRepository;
-        this.bususcarComandosPendentesMapper = bususcarComandosPendentesMapper;
+        this.buscarComandosPendentesMapper = buscarComandosPendentesMapper;
     }
 
     //PUT
@@ -62,7 +60,7 @@ public class AgenteOperacoesService {
                     agente.setVersao(requestDTO.getVersao());
                     agente.setDataUltimaAtividade(LocalDateTime.now()); //setta a data e hora atual da chamada desse endpoint
 
-                    return this.atutualizarStatusMapper.toResponseDTO(this.agenteRepository.save(agente));
+                    return this.atualizarStatusMapper.toResponseDTO(this.agenteRepository.save(agente));
 
                 }).orElseThrow(()-> new AgenteNaoEncontradoException(agenteId));
     }
@@ -84,7 +82,7 @@ public class AgenteOperacoesService {
 
         List<Comando> comandos = this.comandoRepository.findByAgenteIdAndStatusOrderByDataCriacaoAsc(agenteId, ComandoStatus.PENDENTE);
 
-        return this.bususcarComandosPendentesMapper.toResponseDTO(agenteId, comandos);
+        return this.buscarComandosPendentesMapper.toResponseDTO(agenteId, comandos);
     }
 
 

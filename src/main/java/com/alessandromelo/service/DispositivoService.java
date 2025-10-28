@@ -7,10 +7,9 @@ import com.alessandromelo.exception.dispositivo.DispositivoNaoEncontradoExceptio
 import com.alessandromelo.exception.dispositivo.NumeroDeSerieJaCadastradoException;
 import com.alessandromelo.exception.global.EntidadeEmUsoException;
 import com.alessandromelo.exception.usuario.UsuarioNaoEncontradoException;
-import com.alessandromelo.mapper.DisdispositivoMapper;
-import com.alessandromelo.mapper.DispositivoMapper;
 import com.alessandromelo.entity.Dispositivo;
 import com.alessandromelo.entity.Usuario;
+import com.alessandromelo.mapper.DispositivoMapper;
 import com.alessandromelo.repository.AgenteRepository;
 import com.alessandromelo.repository.DispositivoRepository;
 import com.alessandromelo.repository.UsuarioRepository;
@@ -22,27 +21,25 @@ import java.util.List;
 public class DispositivoService {
 
     private DispositivoRepository dispositivoRepository;
-    private DisdispositivoMapper disdispositivoMapper;
+    private DispositivoMapper dispositivoMapper;
 
     private UsuarioRepository usuarioRepository;
 
     private AgenteRepository agenteRepository;
 
 
-    public DispositivoService(DispositivoRepository dispositivoRepository, DisdispositivoMapper disdispositivoMapper, UsuarioRepository usuarioRepository, AgenteRepository agenteRepository) {
+    public DispositivoService(DispositivoRepository dispositivoRepository, DispositivoMapper dispositivoMapper, UsuarioRepository usuarioRepository, AgenteRepository agenteRepository) {
         this.dispositivoRepository = dispositivoRepository;
-        this.disdispositivoMapper = disdispositivoMapper;
+        this.dispositivoMapper = dispositivoMapper;
         this.usuarioRepository = usuarioRepository;
         this.agenteRepository = agenteRepository;
     }
-
-
 
     //Listar todos os dispositivos:
     public List<DispositivoResponseDTO> listarTodosDispositivos(){
 
         List<Dispositivo> dispositivos = this.dispositivoRepository.findAll();
-        return dispositivos.stream().map(this.disdispositivoMapper::toResponseDTO).toList();
+        return dispositivos.stream().map(this.dispositivoMapper::toResponseDTO).toList();
     }
 
 
@@ -52,14 +49,14 @@ public class DispositivoService {
         Dispositivo dispositivo = this.dispositivoRepository.findById(dispositivoId)
                 .orElseThrow(() -> new DispositivoNaoEncontradoException(dispositivoId));
 
-        return this.disdispositivoMapper.toResponseDTO(dispositivo);
+        return this.dispositivoMapper.toResponseDTO(dispositivo);
     }
 
 //Buscar Dispositivos por Status:
     public List<DispositivoResponseDTO> buscarDispositivosPorStatus(DispositivoStatus status){
 
         List<Dispositivo> dispositivos = this.dispositivoRepository.findByStatus(status);
-        return dispositivos.stream().map(this.disdispositivoMapper::toResponseDTO).toList();
+        return dispositivos.stream().map(this.dispositivoMapper::toResponseDTO).toList();
     }
 
 
@@ -73,7 +70,7 @@ public class DispositivoService {
             throw new NumeroDeSerieJaCadastradoException();
         }
 
-        Dispositivo dispositivo = this.disdispositivoMapper.toEntity(novoDispositivoDTO);
+        Dispositivo dispositivo = this.dispositivoMapper.toEntity(novoDispositivoDTO);
 
         if(novoDispositivoDTO.getUsuarioId() != null){
 
@@ -83,7 +80,7 @@ public class DispositivoService {
             dispositivo.setUsuario(usuario);
         }
 
-        return this.disdispositivoMapper.toResponseDTO(this.dispositivoRepository.save(dispositivo));
+        return this.dispositivoMapper.toResponseDTO(this.dispositivoRepository.save(dispositivo));
     }
 
 //Atualizar Dispositivo: (CONSERTAR O PROBLEMA DE CAMPOS NULOS)
@@ -116,7 +113,7 @@ public class DispositivoService {
                        dispositivo.setUsuario(usuario);
                    }
 
-                   return this.disdispositivoMapper.toResponseDTO(this.dispositivoRepository.save(dispositivo));
+                   return this.dispositivoMapper.toResponseDTO(this.dispositivoRepository.save(dispositivo));
 
                }).orElseThrow(() -> new DispositivoNaoEncontradoException(dispositivoId));
     }

@@ -7,12 +7,10 @@ import com.alessandromelo.exception.departamento.DepartamentoNaoEncontradoExcept
 import com.alessandromelo.exception.departamento.NomeJaCadastradoException;
 import com.alessandromelo.exception.departamento.SiglaJaCadastradaException;
 import com.alessandromelo.exception.global.EntidadeEmUsoException;
-import com.alessandromelo.mapper.DedepartamentoMapper;
-import com.alessandromelo.mapper.DepartamentoMapper;
-import com.alessandromelo.mapper.UsuarioMapper;
 import com.alessandromelo.entity.Departamento;
 import com.alessandromelo.entity.Usuario;
-import com.alessandromelo.mapper.UsusuarioMapper;
+import com.alessandromelo.mapper.DepartamentoMapper;
+import com.alessandromelo.mapper.UsuarioMapper;
 import com.alessandromelo.repository.DepartamentoRepository;
 import com.alessandromelo.repository.UsuarioRepository;
 import org.springframework.stereotype.Service;
@@ -23,18 +21,17 @@ import java.util.List;
 public class DepartamentoService {
 
     private DepartamentoRepository departamentoRepository;
-    private DedepartamentoMapper dedepartamentoMapper;
+    private DepartamentoMapper departamentoMapper;
 
     private UsuarioRepository usuarioRepository;
-    private UsusuarioMapper ususuarioMapper;
+    private UsuarioMapper usuarioMapper;
 
 
-    public DepartamentoService(DepartamentoRepository departamentoRepository, DedepartamentoMapper dedepartamentoMapper, UsuarioRepository usuarioRepository, UsusuarioMapper ususuarioMapper) {
+    public DepartamentoService(DepartamentoRepository departamentoRepository, DepartamentoMapper departamentoMapper, UsuarioRepository usuarioRepository, UsuarioMapper usuarioMapper) {
         this.departamentoRepository = departamentoRepository;
-        this.dedepartamentoMapper = dedepartamentoMapper;
+        this.departamentoMapper = departamentoMapper;
         this.usuarioRepository = usuarioRepository;
-
-        this.ususuarioMapper = ususuarioMapper;
+        this.usuarioMapper = usuarioMapper;
     }
 
     //Listar Departamentos:
@@ -42,7 +39,7 @@ public class DepartamentoService {
 
         List<Departamento> departamentos = this.departamentoRepository.findAll();
 
-        return departamentos.stream().map(this.dedepartamentoMapper::toResponseDTO).toList();
+        return departamentos.stream().map(this.departamentoMapper::toResponseDTO).toList();
     }
 
     //Buscar Departamento por Id:
@@ -51,7 +48,7 @@ public class DepartamentoService {
         Departamento departamento = this.departamentoRepository.findById(departamentoId)
                 .orElseThrow(() -> new DepartamentoNaoEncontradoException(departamentoId));
 
-        return this.dedepartamentoMapper.toResponseDTO(departamento);
+        return this.departamentoMapper.toResponseDTO(departamento);
     }
 
     //Criar Departamento:
@@ -66,9 +63,9 @@ public class DepartamentoService {
             throw new SiglaJaCadastradaException();
         }
 
-        Departamento departamento = this.dedepartamentoMapper.toEntity(novoDepartamentoDTO);
+        Departamento departamento = this.departamentoMapper.toEntity(novoDepartamentoDTO);
 
-        return this.dedepartamentoMapper.toResponseDTO(this.departamentoRepository.save(departamento));
+        return this.departamentoMapper.toResponseDTO(this.departamentoRepository.save(departamento));
     }
 
     //Atualizar Departamento: (CONSERTAR O PROBLEMA DE CAMPOS NULOS)
@@ -89,7 +86,7 @@ public class DepartamentoService {
                     departamento.setNome(departamentoAtualizadoDTO.getNome());
                     departamento.setSigla(departamentoAtualizadoDTO.getSigla());
 
-                    return this.dedepartamentoMapper.toResponseDTO(this.departamentoRepository.save(departamento));
+                    return this.departamentoMapper.toResponseDTO(this.departamentoRepository.save(departamento));
 
                 }).orElseThrow(() -> new DepartamentoNaoEncontradoException(departamentoId));
     }
@@ -118,7 +115,7 @@ public class DepartamentoService {
         List<Usuario> usuarios = this.departamentoRepository.findById(departamentoId).map(Departamento::getUsuarios)
                 .orElseThrow(() -> new DepartamentoNaoEncontradoException(departamentoId));
 
-        return usuarios.stream().map(this.ususuarioMapper::toResumoResponseDTO).toList();
+        return usuarios.stream().map(this.usuarioMapper::toResumoResponseDTO).toList();
     }
 
 }
