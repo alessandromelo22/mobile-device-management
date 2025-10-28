@@ -8,11 +8,13 @@ import com.alessandromelo.dto.usuario.UsuarioResponseDTO;
 import com.alessandromelo.exception.global.EntidadeEmUsoException;
 import com.alessandromelo.exception.usuario.EmailJaCadastradoException;
 import com.alessandromelo.exception.usuario.MatriculaJaCadastradaException;
+import com.alessandromelo.mapper.DisdispositivoMapper;
 import com.alessandromelo.mapper.DispositivoMapper;
 import com.alessandromelo.mapper.UsuarioMapper;
 import com.alessandromelo.entity.Departamento;
 import com.alessandromelo.entity.Dispositivo;
 import com.alessandromelo.entity.Usuario;
+import com.alessandromelo.mapper.UsusuarioMapper;
 import com.alessandromelo.repository.DepartamentoRepository;
 import com.alessandromelo.repository.DispositivoRepository;
 import com.alessandromelo.repository.UsuarioRepository;
@@ -27,36 +29,27 @@ import java.util.List;
 public class UsuarioService {
 
     private UsuarioRepository usuarioRepository;
-    private UsuarioMapper usuarioMapper;
+    private UsusuarioMapper ususuarioMapper;
 
     private DispositivoRepository dispositivoRepository;
-    private DispositivoMapper dispositivoMapper;
+    private DisdispositivoMapper disdispositivoMapper;
 
     private DepartamentoRepository departamentoRepository;
 
 
-
-    public UsuarioService(UsuarioRepository usuarioRepository, DepartamentoRepository departamentoRepository,
-                          DispositivoRepository dispositivoRepository, UsuarioMapper usuarioMapper,
-                          DispositivoMapper dispositivoMapper) {
-
+    public UsuarioService(UsuarioRepository usuarioRepository, UsusuarioMapper ususuarioMapper, DispositivoRepository dispositivoRepository, DisdispositivoMapper disdispositivoMapper, DepartamentoRepository departamentoRepository) {
         this.usuarioRepository = usuarioRepository;
-        this.departamentoRepository = departamentoRepository;
+        this.ususuarioMapper = ususuarioMapper;
         this.dispositivoRepository = dispositivoRepository;
-        this.usuarioMapper = usuarioMapper;
-        this.dispositivoMapper = dispositivoMapper;
+        this.disdispositivoMapper = disdispositivoMapper;
+        this.departamentoRepository = departamentoRepository;
     }
-
-
-
-
-
 
     //Listar todos os usuarios:
     public List<UsuarioResponseDTO> listarUsuarios(){
 
         List<Usuario> usuarios = this.usuarioRepository.findAll();
-        return usuarios.stream().map(usuarioMapper::toResponseDTO).toList();
+        return usuarios.stream().map(ususuarioMapper::toResponseDTO).toList();
     }
 
 //Buscar Usuario por id: (Modificado, agora lança uma exception)
@@ -65,7 +58,7 @@ public class UsuarioService {
         Usuario usuario = this.usuarioRepository.findById(usuarioId)
                 .orElseThrow(() -> new UsuarioNaoEncontradoException(usuarioId));
 
-        return this.usuarioMapper.toResponseDTO(usuario);
+        return this.ususuarioMapper.toResponseDTO(usuario);
     }
 
 
@@ -83,7 +76,7 @@ public class UsuarioService {
             throw new MatriculaJaCadastradaException();
         }
         //2
-        Usuario usuario = this.usuarioMapper.toEntity(novoUsuarioDTO);
+        Usuario usuario = this.ususuarioMapper.toEntity(novoUsuarioDTO);
         //3
         if (novoUsuarioDTO.getDepartamentoId() != null){
 
@@ -93,7 +86,7 @@ public class UsuarioService {
             usuario.setDepartamento(departamento);
         }
 
-        return this.usuarioMapper.toResponseDTO(this.usuarioRepository.save(usuario));
+        return this.ususuarioMapper.toResponseDTO(this.usuarioRepository.save(usuario));
     }
 
 
@@ -126,7 +119,7 @@ public class UsuarioService {
                         usuario.setDepartamento(departamento);
                     }
 
-                    return this.usuarioMapper.toResponseDTO(this.usuarioRepository.save(usuario));
+                    return this.ususuarioMapper.toResponseDTO(this.usuarioRepository.save(usuario));
 
                 } ).orElseThrow(() -> new UsuarioNaoEncontradoException(usuarioId));
     }
@@ -151,7 +144,7 @@ public class UsuarioService {
         List<Dispositivo> dispositivos = this.usuarioRepository.findById(usuarioId).map(Usuario::getDispositivos)
                 .orElseThrow(() -> new UsuarioNaoEncontradoException(usuarioId));
 
-        return dispositivos.stream().map(this.dispositivoMapper::toResumoResponseDTO).toList();
+        return dispositivos.stream().map(this.disdispositivoMapper::toResumoResponseDTO).toList();
     }
 
 //Setar Dispositivo a um Usuario:
@@ -167,7 +160,7 @@ public class UsuarioService {
 
         this.dispositivoRepository.save(dispositivo);
 
-        return this.usuarioMapper.toUsuarioDispositivoResponseDTO(usuario, dispositivo);
+        return this.ususuarioMapper.toUsuarioDispositivoResponseDTO(usuario, dispositivo);
     }
 
 
@@ -184,7 +177,7 @@ public class UsuarioService {
 
         this.usuarioRepository.save(usuario);
 
-        return this.usuarioMapper.toUsuarioDepartamentoResponseDTO(usuario, departamento);
+        return this.ususuarioMapper.toUsuarioDepartamentoResponseDTO(usuario, departamento);
     }
 
 

@@ -44,11 +44,11 @@ public class UsuarioDispositivoResponseDTO {
         this.matricula = matricula;
     }
 
-    public DispositivoResumoResponseDTO getDispositivoResumoDTO() {
+    public DispositivoResumoResponseDTO getDispositivoResumoResponseDTO() {
         return dispositivoResumoResponseDTO;
     }
 
-    public void setDispositivoResumoDTO(DispositivoResumoResponseDTO dispositivoResumoResponseDTO) {
+    public void setDispositivoResumoResponseDTO(DispositivoResumoResponseDTO dispositivoResumoResponseDTO) {
         this.dispositivoResumoResponseDTO = dispositivoResumoResponseDTO;
     }
 }

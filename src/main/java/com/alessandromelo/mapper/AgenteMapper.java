@@ -39,6 +39,7 @@ public class AgenteMapper {
         agenteResponseDTO.setLog(agente.getLog());
         agenteResponseDTO.setDataUltimaAtividade(agente.getDataUltimaAtividade());
 
+        //Dispositivo
         if(agente.getDispositivo() != null){
 
             DispositivoResumoResponseDTO dispositivoResumoResponseDTO = new DispositivoResumoResponseDTO();

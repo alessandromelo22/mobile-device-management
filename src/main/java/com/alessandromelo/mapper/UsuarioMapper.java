@@ -64,7 +64,7 @@ public class UsuarioMapper {
         dispositivoResumoResponseDTO.setModelo(dispositivo.getModelo());
         dispositivoResumoResponseDTO.setStatus(dispositivo.getStatus());
 
-        usuarioDispositivoResponseDTO.setDispositivoResumoDTO(dispositivoResumoResponseDTO);
+        usuarioDispositivoResponseDTO.setDispositivoResumoResponseDTO(dispositivoResumoResponseDTO);
 
         return usuarioDispositivoResponseDTO;
     }
@@ -82,7 +82,7 @@ public class UsuarioMapper {
         departamentoResumoResponseDTO.setId(departamento.getId());
         departamentoResumoResponseDTO.setNome(departamento.getNome());
 
-        usuarioDepartamentoResponseDTO.setDepartamentoResumoDTO(departamentoResumoResponseDTO);
+        usuarioDepartamentoResponseDTO.setDepartamentoResumoResponseDTO(departamentoResumoResponseDTO);
 
         return usuarioDepartamentoResponseDTO;
     }

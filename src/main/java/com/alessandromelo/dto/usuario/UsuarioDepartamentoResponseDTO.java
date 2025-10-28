@@ -45,11 +45,11 @@ public class UsuarioDepartamentoResponseDTO {
         this.matricula = matricula;
     }
 
-    public DepartamentoResumoResponseDTO getDepartamentoResumoDTO() {
+    public DepartamentoResumoResponseDTO getDepartamentoResumoResponseDTO() {
         return departamentoResumoResponseDTO;
     }
 
-    public void setDepartamentoResumoDTO(DepartamentoResumoResponseDTO departamentoResumoResponseDTO) {
+    public void setDepartamentoResumoResponseDTO(DepartamentoResumoResponseDTO departamentoResumoResponseDTO) {
         this.departamentoResumoResponseDTO = departamentoResumoResponseDTO;
     }
 }
