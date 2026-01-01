@@ -13,20 +13,22 @@ Este projeto é um sistema web RESTful desenvolvido com **Java** e **Spring Boot
 - Hibernate
 - PostgreSQL
 - Hibernate Validator
-- Spring AOP
+- Swagger (OpenAPI)
+- MapStruct
+- OpenCSV
 
 ---
 
 ## ⚙️ Funcionalidades Implementadas
 
-- ✅ Camadas bem definidas: Controller, Service, Repository, DTO, Exception, Mapper
-- ✅ Cadastro, listagem, atualização e exclusão de **usuários**
-- ✅ Criação e gerenciamento de **departamentos**
-- ✅ Registro e controle de **dispositivos móveis**
-- ✅ Separação entre entidades e **DTOs**
+- ✅ **Camadas** bem definidas: `Controller`, `Service`, `Repository`, `DTO`, `Enums`, `CSV`, `Exception`, `Mapper`
+- ✅ **Registro** e **controle** sobre `Departamentos`, `Usuários`, `Dispositivos`, `Agentes` e `Comandos`
 - ✅ Criação de **exceptions personalizadas** para regras de negócio
-- ✅ Tratamento global de exceções com `@RestControllerAdvice`
+- ✅ **Tratamento global de exceções** com `@RestControllerAdvice`
 - ✅ **Validação** de dados com Hibernate Validator
+- ✅ **Mapeameto** de DTOs para Entidades usando a API **MapStruct**
+- ✅ Endpoint que permite o cadastro de múltiplos `Usuários` atraves da **importação de um arquivo `.csv`**
+- ✅ Documentação usando **Swagger (OpenAPI)**
 
 ---
 
@@ -37,13 +39,15 @@ src/
 └── main/
       └── java/
             └── com.alessandromelo/
+                      ├── config/  //Configurações da aplicação (OpenAPI por exemplo)
                       ├── controller/  //Endpoints REST
+                      ├── csv/  //Operações voltadas a importação e exportação de arquivos .csv
                       ├── dto/  //Objetos de transferência de dados
                       ├── entity/  //Entidades JPA
                       ├── enums/ 
                       ├── exceptions/  //Exceptions personalizadas
                       ├── exceptionhandler/  //Tratamento global de exceções
-                      ├── mapper/  //Conversão manual entre entidades e DTOs
+                      ├── mapper/  //Conversão entre entidades e DTOs usando MapStruct
                       ├── repository/  //Interface com o banco de dados
                       └── service/  //Regras de negócio
 ```
@@ -77,10 +81,9 @@ http://localhost:8080
 **🚧 Em evolução contínua**  
 O sistema já está funcional e com boa cobertura das funcionalidades principais. Próximas etapas previstas:
 
-- Novas operações envolvendo os Dispositivos
-- Logs utilizando Spring AOP 
 - Testes automatizados
-- Documentação com Swagger
+- Integração da API a um Agente externo
+- Novas funcionalidades envolvendo arquivos `.csv`
 
 
 ## 🤝 Contribuições
@@ -94,3 +97,4 @@ Desenvolvido por [Alessandro Melo](https://github.com/AlessandroMelo22)
 
 ## 📝 Licença
 Este projeto está licenciado sob a MIT License.
+
