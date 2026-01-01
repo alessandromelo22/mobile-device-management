@@ -1,11 +1,7 @@
 package com.alessandromelo.mapper;
 
 
-import com.alessandromelo.dto.usuario.UsuarioResumoResponseDTO;
-import com.alessandromelo.dto.usuario.UsuarioDepartamentoResponseDTO;
-import com.alessandromelo.dto.usuario.UsuarioDispositivoResponseDTO;
-import com.alessandromelo.dto.usuario.UsuarioRequestDTO;
-import com.alessandromelo.dto.usuario.UsuarioResponseDTO;
+import com.alessandromelo.dto.usuario.*;
 import com.alessandromelo.entity.Departamento;
 import com.alessandromelo.entity.Dispositivo;
 import com.alessandromelo.entity.Usuario;
@@ -38,4 +34,9 @@ public interface UsuarioMapper {
 
     //Entity -> UsuarioResumoResponse
     UsuarioResumoResponseDTO toResumoResponseDTO(Usuario usuario);
+
+
+    //UsuarioImportDTO -> Entity
+    @Mapping(target = "departamento", ignore = true)
+    Usuario toEntity(UsuarioImportDTO usuarioImportDTO);
 }

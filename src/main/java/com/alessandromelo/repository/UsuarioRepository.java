@@ -14,4 +14,6 @@ public interface UsuarioRepository extends JpaRepository<Usuario, Long> {
 
     //verifica se tem algum Usuario associado ao Departamento passado pelo Id
     boolean existsByDepartamentoId(Long departamentoId);
+
+
 }

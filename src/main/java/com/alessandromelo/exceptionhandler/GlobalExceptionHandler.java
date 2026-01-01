@@ -9,9 +9,11 @@ import com.alessandromelo.exception.departamento.SiglaJaCadastradaException;
 import com.alessandromelo.exception.dispositivo.DispositivoNaoEncontradoException;
 import com.alessandromelo.exception.dispositivo.NumeroDeSerieJaCadastradoException;
 import com.alessandromelo.exception.global.EntidadeEmUsoException;
+import com.alessandromelo.exception.importacao.*;
 import com.alessandromelo.exception.usuario.EmailJaCadastradoException;
 import com.alessandromelo.exception.usuario.MatriculaJaCadastradaException;
 import com.alessandromelo.exception.usuario.UsuarioNaoEncontradoException;
+import com.opencsv.exceptions.CsvRequiredFieldEmptyException;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,7 +22,6 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
-import java.util.List;
 import java.util.stream.Collectors;
 
 @RestControllerAdvice
@@ -51,6 +52,7 @@ public class GlobalExceptionHandler {
         ApiError error = new ApiError(HttpStatus.BAD_REQUEST, ex.getMessage(), request.getRequestURI());
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
     }
+
 
 
 ////////DISPOSITIVO:
@@ -154,6 +156,7 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
     }
 
+
 ///////VALIDAÇÃO (Bean Validation):
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
@@ -170,5 +173,62 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
     }
 
+////////IMPORTAÇÃO CSV:
+
+    @ExceptionHandler(ArquivoNaoEnviadoException.class)
+    public ResponseEntity<ApiError> handleArquivoNaoEnviadoException(ArquivoNaoEnviadoException ex,
+                                                                     HttpServletRequest request){
+        //400
+        ApiError error = new ApiError(HttpStatus.BAD_REQUEST, ex.getMessage(), request.getRequestURI());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
+    }
+
+    @ExceptionHandler(ArquivoVazioException.class)
+    public ResponseEntity<ApiError> handleArquivoVazioException(ArquivoVazioException ex,
+                                                                HttpServletRequest request){
+        //400
+        ApiError error = new ApiError(HttpStatus.BAD_REQUEST, ex.getMessage(), request.getRequestURI());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
+    }
+
+    @ExceptionHandler(CabecalhoDoArquivoInvalidoException.class)
+    public ResponseEntity<ApiError> handleCabecalhoDoArquivoInvalidoException(CabecalhoDoArquivoInvalidoException ex,
+                                                                              HttpServletRequest request){
+        //400
+        ApiError error = new ApiError(HttpStatus.BAD_REQUEST, ex.getMessage(), request.getRequestURI());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
+    }
+
+    @ExceptionHandler(TamanhoDoArquivoExcedidoException.class)
+    public ResponseEntity<ApiError> handleTamanhoDoArquivoExcedidoException(TamanhoDoArquivoExcedidoException ex,
+                                                                            HttpServletRequest request){
+        //400
+        ApiError error = new ApiError(HttpStatus.BAD_REQUEST, ex.getMessage(), request.getRequestURI());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
+    }
+
+    @ExceptionHandler(TipoArquivoInvalidoException.class)
+    public ResponseEntity<ApiError> handleTipoArquivoInvalidoException(TipoArquivoInvalidoException ex,
+                                                                       HttpServletRequest request){
+        //400
+        ApiError error = new ApiError(HttpStatus.BAD_REQUEST, ex.getMessage(), request.getRequestURI());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
+    }
+
+    @ExceptionHandler(ArquivoImportacaoException.class)
+    public ResponseEntity<ApiError> handleArquivoImportacaoException(ArquivoImportacaoException ex,
+                                                                     HttpServletRequest request){
+        //400
+        ApiError error = new ApiError(HttpStatus.BAD_REQUEST, ex.getMessage(), request.getRequestURI());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
+    }
+
+    @ExceptionHandler(CsvLeituraException.class)
+    public ResponseEntity<ApiError> handleCsvLeituraException(CsvLeituraException ex,
+                                                              HttpServletRequest request){
+        //422
+        ApiError error = new ApiError(HttpStatus.UNPROCESSABLE_ENTITY, ex.getMessage(), request.getRequestURI());
+        return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(error);
+    }
 
 }

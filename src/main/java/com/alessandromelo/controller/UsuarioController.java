@@ -12,9 +12,12 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -181,6 +184,33 @@ public class UsuarioController {
 
         return ResponseEntity.ok(this.usuarioService.vincularUsuarioAoDepartamento(usuarioId, departamentoId));
     }
+
+
+
+    @Operation(
+            summary = "Cadastra múltiplos Usuários a partir de um arquivo CSV",
+            description = "Este endpoint permite a importação em lote de usuários a partir de um arquivo CSV.\n" +
+                    "O arquivo é validado quanto à estrutura e aos campos obrigatórios antes do processamento.\n" +
+                    "Em caso de inconsistências no formato ou nos dados, a importação é interrompida e uma mensagem de erro é retornada."
+    )
+    @ApiResponses({
+            @ApiResponse(responseCode = "201", description = "Usuários cadastrados com sucesso!"),
+            @ApiResponse(responseCode = "400", description = "Problemas na estrutra do arquivo CSV enviado: " +
+                    "arquivo não enviado, vazio, arquivo com tipo inválido ou com tamanho máximo excedido, cabeçalho inválido, etc. "),
+            @ApiResponse(responseCode = "404", description = "Departamento não encontrado!"),
+            @ApiResponse(responseCode = "422", description = "Problemas no conteúdo do arquivo: campos obrigatórios faltando, " +
+                    "incompatibilidade de tipos, erros de parsing, etc.")
+    })
+    @PostMapping("/import")
+    public ResponseEntity<Long> cadastrarUsuariosCsv(
+            @Parameter(description = "Arquivo que contém os registros dos Usuários que serão registrados")
+            @RequestParam(name = "file") MultipartFile arquivo){
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(
+                this.usuarioService.cadastrarUsuariosCsv(arquivo));
+    }
+
+
 
 
 }

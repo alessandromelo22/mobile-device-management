@@ -1,10 +1,8 @@
 package com.alessandromelo.service;
 
+import com.alessandromelo.csv.importer.UsuarioCsvImporter;
 import com.alessandromelo.dto.dispositivo.DispositivoResumoResponseDTO;
-import com.alessandromelo.dto.usuario.UsuarioDepartamentoResponseDTO;
-import com.alessandromelo.dto.usuario.UsuarioDispositivoResponseDTO;
-import com.alessandromelo.dto.usuario.UsuarioRequestDTO;
-import com.alessandromelo.dto.usuario.UsuarioResponseDTO;
+import com.alessandromelo.dto.usuario.*;
 import com.alessandromelo.exception.global.EntidadeEmUsoException;
 import com.alessandromelo.exception.usuario.EmailJaCadastradoException;
 import com.alessandromelo.exception.usuario.MatriculaJaCadastradaException;
@@ -20,6 +18,7 @@ import com.alessandromelo.exception.departamento.DepartamentoNaoEncontradoExcept
 import com.alessandromelo.exception.dispositivo.DispositivoNaoEncontradoException;
 import com.alessandromelo.exception.usuario.UsuarioNaoEncontradoException;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -28,6 +27,8 @@ public class UsuarioService {
 
     private UsuarioRepository usuarioRepository;
     private UsuarioMapper usuarioMapper;
+    private UsuarioCsvImporter usuarioCsvImporter;
+
 
     private DispositivoRepository dispositivoRepository;
     private DispositivoMapper dispositivoMapper;
@@ -35,9 +36,10 @@ public class UsuarioService {
     private DepartamentoRepository departamentoRepository;
 
 
-    public UsuarioService(UsuarioRepository usuarioRepository, UsuarioMapper usuarioMapper, DispositivoRepository dispositivoRepository, DispositivoMapper dispositivoMapper, DepartamentoRepository departamentoRepository) {
+    public UsuarioService(UsuarioRepository usuarioRepository, UsuarioMapper usuarioMapper, UsuarioCsvImporter usuarioCsvImporter, DispositivoRepository dispositivoRepository, DispositivoMapper dispositivoMapper, DepartamentoRepository departamentoRepository) {
         this.usuarioRepository = usuarioRepository;
         this.usuarioMapper = usuarioMapper;
+        this.usuarioCsvImporter = usuarioCsvImporter;
         this.dispositivoRepository = dispositivoRepository;
         this.dispositivoMapper = dispositivoMapper;
         this.departamentoRepository = departamentoRepository;
@@ -177,6 +179,45 @@ public class UsuarioService {
 
         return this.usuarioMapper.toUsuarioDepartamentoResponseDTO(usuario, departamento);
     }
+
+
+    /**
+     *     Realiza a leitura do arquivo, validação, parse para Entidades do tipo Usuario e por fim
+     *     salva no banco de dados.
+     *
+     *     @return um Long indicando a quantidade de registros salvos.
+     */
+
+    public Long cadastrarUsuariosCsv(MultipartFile arquivo){
+
+        List<UsuarioImportDTO> dtosImport = this.usuarioCsvImporter.lerCsv(arquivo);
+
+        List<Usuario> usuarios = dtosImport.stream()
+                .map(usuarioImportDTO -> {
+
+                    if (!(this.departamentoRepository.existsByNome(usuarioImportDTO.getNomeDepartamento()))) {
+                        throw new DepartamentoNaoEncontradoException(usuarioImportDTO.getNomeDepartamento());
+                    }
+
+                    if(this.usuarioRepository.existsByMatricula(usuarioImportDTO.getMatricula())){
+                        throw new MatriculaJaCadastradaException(usuarioImportDTO.getMatricula());
+                    }
+
+                    if(this.usuarioRepository.existsByEmail(usuarioImportDTO.getEmail())){
+                        throw new EmailJaCadastradoException(usuarioImportDTO.getEmail());
+                    }
+
+                    Departamento departamento = this.departamentoRepository.findByNome(usuarioImportDTO.getNomeDepartamento());
+
+                    Usuario usuario = this.usuarioMapper.toEntity(usuarioImportDTO);
+                    usuario.setDepartamento(departamento);
+
+                    return this.usuarioRepository.save(usuario);
+                }).toList();
+
+       return (long) usuarios.size();
+    }
+
 
 
 }

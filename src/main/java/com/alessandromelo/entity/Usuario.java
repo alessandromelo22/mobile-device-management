@@ -22,7 +22,7 @@ public class Usuario {
 
     private String cargo;
 
-    private Boolean ativo; //indica se o usuario está ativo no sistema
+    private Boolean ativo = true; //indica se o usuario está ativo no sistema
 
     @OneToMany(mappedBy = "usuario")
     private List<Dispositivo> dispositivos;

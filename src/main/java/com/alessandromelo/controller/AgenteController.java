@@ -152,7 +152,6 @@ public class AgenteController {
         return ResponseEntity.ok(this.agenteService.ativarAgente(agenteId));
     }
 
-
 ////Deletar por id: SÓ PARA TESTES
 //    @DeleteMapping("/{agenteId}")
 //    public ResponseEntity<Void> deletarAgente(@PathVariable Long agenteId){
