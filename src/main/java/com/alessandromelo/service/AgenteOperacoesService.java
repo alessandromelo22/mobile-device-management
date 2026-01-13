@@ -5,6 +5,7 @@ import com.alessandromelo.dto.agenteoperacoes.atualizarstatus.AtualizarStatusReq
 import com.alessandromelo.dto.agenteoperacoes.atualizarstatus.AtualizarStatusResponseDTO;
 import com.alessandromelo.dto.agenteoperacoes.buscarcomandospendentes.BuscarComandosPendentesResponseDTO;
 import com.alessandromelo.dto.agenteoperacoes.enviarlogs.EnviarLogsResponseDTO;
+import com.alessandromelo.dto.agenteoperacoes.enviarmetricas.EnviarMetricasRequestDTO;
 import com.alessandromelo.entity.Agente;
 import com.alessandromelo.entity.Comando;
 import com.alessandromelo.enums.ComandoStatus;
@@ -19,8 +20,14 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 /**
- * Endpoints chamados pelo próprio Agente
- * (representa as operações que o Agente consegue fazer)
+ * <p><b>AgenteOperacoesService</b></p>
+ *
+ * <p>Endpoints <b>chamados pelo próprio Agente</b>
+ *  (representa as operações que o Agente consegue fazer)</p>
+ *
+ *<p>DTOs de Request e Response nomeados com o nome da operação para não misturar com DTOs de Persistência.</p>
+ *
+ * {@link AgenteService} -> para ver as operacões de persistência e as regras de negócio.
  */
 
 
@@ -44,12 +51,13 @@ public class AgenteOperacoesService {
     //PUT
 
     /**
-     * Chamado pelo próprio Agente, atualiza apenas alguns campos,
-     * diferente do endpoint AtualizarAgente() que possibilita atualizar todos os campos
+     * Chamado pelo próprio Agente, atualiza apenas alguns campos, usado como um <b>"heartbeat"</b>
+     * diferente do metodo <b>atualizarAgente()</b> de {@link AgenteService}  que possibilita atualizar todos os campos.
      *
-     * @param agenteId  id do Agente
+     * @param agenteId id do Agente
      * @param requestDTO versao e status do Agente
      * @return AtualizarStatusResponseDTO com id, versao, status e dataUltimaAtividade
+     * @throws AgenteNaoEncontradoException se o Agente não existir no banco
      */
 
     public AtualizarStatusResponseDTO atualizarStatus(Long agenteId, AtualizarStatusRequestDTO requestDTO){
@@ -68,10 +76,10 @@ public class AgenteOperacoesService {
 
 
     /**
-     * O agente busca no banco se há comandos PENDENTES
+     * O Agente busca no banco se há <b>comandos com o status como PENDENTE</b>.
      *
      * @param agenteId Id do Agente
-     * @return BuscarComandosPendentesResponseDTO com id do Agente junto com a lista de comandos PENDENTES, ou uma lista vazia se caso não houver nenhum comando
+     * @return BuscarComandosPendentesResponseDTO com id do Agente junto com a lista de comandos PENDENTES, <b>ou</b> uma lista vazia se caso não houver nenhum comando
      * @throws AgenteNaoEncontradoException se o Agente não existir no banco
      */
 
@@ -85,16 +93,22 @@ public class AgenteOperacoesService {
         return this.buscarComandosPendentesMapper.toResponseDTO(agenteId, comandos);
     }
 
+    /**
+     * O Agente chama esse endpoint enviando as Metricas do Dispositivo para ser armazenado no banco de dados
+     *
+     * @param agenteId Id do Agente
+     * @param agenteId Id do Agente
+     */
+
+    public void enviarMetricas(Long agenteId, EnviarMetricasRequestDTO requestDTO){
 
 
-
-
-    public void atualizarStatusComando(Long comandoId){
-        //logica para atualizar o status do comando (EXECUTADO ou FALHA) com base no comandoId e requestDTO
     }
 
-    public EnviarLogsResponseDTO enviarLogs(){
-        // logica para receber e armazenar os logs enviados pelo agente
-        return null;
-    }
+
+
+//    public EnviarLogsResponseDTO enviarLogs(){
+//        // logica para receber e armazenar os logs enviados pelo agente
+//        return null;
+//    }
 }
