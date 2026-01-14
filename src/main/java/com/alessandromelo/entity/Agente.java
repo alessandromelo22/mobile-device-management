@@ -13,14 +13,10 @@ public class Agente {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String versao;
-
     @Enumerated(EnumType.STRING)
     private AgenteStatus status; // enum (ATIVO, INATIVO, EM_EXECUCAO)
-
     private String log; // Log de execução do agente
     private LocalDateTime dataUltimaAtividade;
-//  private String ip;
-//  private String tipoConexao;
 
     @OneToOne
     @JoinColumn(name = "id_dispositivo")
@@ -29,12 +25,15 @@ public class Agente {
     @OneToMany(mappedBy = "agente")
     private List<Comando> comandos;
 
+    @OneToMany(mappedBy = "agente")
+    private List<MetricasDispositivo> metricasDispositivos;
+
 
 
     public Agente() {
     }
 
-    public Agente(Long id, String versao, AgenteStatus status, String log, LocalDateTime dataUltimaAtividade, Dispositivo dispositivo, List<Comando> comandos) {
+    public Agente(Long id, String versao, AgenteStatus status, String log, LocalDateTime dataUltimaAtividade, Dispositivo dispositivo, List<Comando> comandos, List<MetricasDispositivo> metricasDispositivos) {
         this.id = id;
         this.versao = versao;
         this.status = status;
@@ -42,6 +41,7 @@ public class Agente {
         this.dataUltimaAtividade = dataUltimaAtividade;
         this.dispositivo = dispositivo;
         this.comandos = comandos;
+        this.metricasDispositivos = metricasDispositivos;
     }
 
     public Long getId() {
@@ -98,5 +98,13 @@ public class Agente {
 
     public void setComandos(List<Comando> comandos) {
         this.comandos = comandos;
+    }
+
+    public List<MetricasDispositivo> getMetricasDispositivos() {
+        return metricasDispositivos;
+    }
+
+    public void setMetricasDispositivos(List<MetricasDispositivo> metricasDispositivos) {
+        this.metricasDispositivos = metricasDispositivos;
     }
 }
