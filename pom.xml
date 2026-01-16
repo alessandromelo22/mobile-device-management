@@ -74,10 +74,18 @@
             <version>1.5.5.Final</version>
         </dependency>
 
+
+        <!--CSV-->
         <dependency>
             <groupId>com.opencsv</groupId>
             <artifactId>opencsv</artifactId>
             <version>5.12.0</version>
+        </dependency>
+
+        <!--TESTES-->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
         </dependency>
 
     </dependencies>
