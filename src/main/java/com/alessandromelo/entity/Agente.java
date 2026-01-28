@@ -4,7 +4,20 @@ import com.alessandromelo.enums.AgenteStatus;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
+import java.util.Collection;
 import java.util.List;
+
+/**
+ * <p>Representa a entidade de <b>Agente</b></p>
+ *
+ * <p>{@code id} -> Id do Agente</p>
+ * <p>{@code versao} -> Versão que o Agente se encontra</p>
+ * <p>{@code status} -> Representa seu estado podendo receber os valores (ATIVO, INATIVO, EM_EXECUCAO)</p>
+ * <p>{@code log} -> Logs de exução</p>
+ * <p>{@code dataUltimaAtividade} ->Registra a data da ultima operação de escrita ou evento ativo</p>
+ * <p>{@code dispositivo} -> FK que faz referência a entidade {@link Dispositivo}</p>
+ *
+ */
 
 @Entity
 public class Agente {

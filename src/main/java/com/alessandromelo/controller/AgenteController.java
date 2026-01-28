@@ -153,8 +153,8 @@ public class AgenteController {
     }
 
 ////Deletar por id: SÓ PARA TESTES
-//    @DeleteMapping("/{agenteId}")
-//    public ResponseEntity<Void> deletarAgente(@PathVariable Long agenteId){
-//        return ResponseEntity.noContent().build(); //204
-//    }
+    @DeleteMapping("/{agenteId}")
+    public ResponseEntity<Void> deletarAgente(@PathVariable Long agenteId){
+        return ResponseEntity.noContent().build(); //204
+    }
 }

@@ -4,16 +4,20 @@ package com.alessandromelo.service;
 import com.alessandromelo.dto.agenteoperacoes.atualizarstatus.AtualizarStatusRequestDTO;
 import com.alessandromelo.dto.agenteoperacoes.atualizarstatus.AtualizarStatusResponseDTO;
 import com.alessandromelo.dto.agenteoperacoes.buscarcomandospendentes.BuscarComandosPendentesResponseDTO;
-import com.alessandromelo.dto.agenteoperacoes.enviarlogs.EnviarLogsResponseDTO;
 import com.alessandromelo.dto.agenteoperacoes.enviarmetricas.EnviarMetricasRequestDTO;
+import com.alessandromelo.dto.agenteoperacoes.enviarmetricas.EnviarMetricasResponseDTO;
+import com.alessandromelo.dto.metricasdispositivo.MetricasDispositivoResponseDTO;
 import com.alessandromelo.entity.Agente;
 import com.alessandromelo.entity.Comando;
+import com.alessandromelo.entity.MetricasDispositivo;
 import com.alessandromelo.enums.ComandoStatus;
 import com.alessandromelo.exception.agente.AgenteNaoEncontradoException;
 import com.alessandromelo.mapper.agenteoperacoes.AtualizarStatusMapper;
 import com.alessandromelo.mapper.agenteoperacoes.BuscarComandosPendentesMapper;
+import com.alessandromelo.mapper.agenteoperacoes.EnviarMetricasMapper;
 import com.alessandromelo.repository.AgenteRepository;
 import com.alessandromelo.repository.ComandoRepository;
+import com.alessandromelo.repository.MetricasDispositivoRepository;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -41,11 +45,16 @@ public class AgenteOperacoesService {
     private ComandoRepository comandoRepository;
     private BuscarComandosPendentesMapper buscarComandosPendentesMapper;
 
-    public AgenteOperacoesService(AgenteRepository agenteRepository, AtualizarStatusMapper atualizarStatusMapper, ComandoRepository comandoRepository, BuscarComandosPendentesMapper buscarComandosPendentesMapper) {
+    private MetricasDispositivoRepository metricasDispositivoRepository;
+    private EnviarMetricasMapper enviarMetricasMapper;
+
+    public AgenteOperacoesService(AgenteRepository agenteRepository, AtualizarStatusMapper atualizarStatusMapper, ComandoRepository comandoRepository, BuscarComandosPendentesMapper buscarComandosPendentesMapper, MetricasDispositivoRepository metricasDispositivoRepository, EnviarMetricasMapper enviarMetricasMapper) {
         this.agenteRepository = agenteRepository;
         this.atualizarStatusMapper = atualizarStatusMapper;
         this.comandoRepository = comandoRepository;
         this.buscarComandosPendentesMapper = buscarComandosPendentesMapper;
+        this.metricasDispositivoRepository = metricasDispositivoRepository;
+        this.enviarMetricasMapper = enviarMetricasMapper;
     }
 
     //PUT
@@ -84,9 +93,9 @@ public class AgenteOperacoesService {
      */
 
     public BuscarComandosPendentesResponseDTO buscarComandosPendentes(Long agenteId){
-
+        //atualizar o campo dataUltimaAtividade
         Agente agente = this.agenteRepository.findById(agenteId)
-                .orElseThrow(() -> new AgenteNaoEncontradoException(agenteId));
+                .orElseThrow (() -> new AgenteNaoEncontradoException(agenteId));
 
         List<Comando> comandos = this.comandoRepository.findByAgenteIdAndStatusOrderByDataCriacaoAsc(agenteId, ComandoStatus.PENDENTE);
 
@@ -100,15 +109,21 @@ public class AgenteOperacoesService {
      * @param agenteId Id do Agente
      */
 
-    public void enviarMetricas(Long agenteId, EnviarMetricasRequestDTO requestDTO){
+    public EnviarMetricasResponseDTO enviarMetricas(Long agenteId, EnviarMetricasRequestDTO requestDTO){
+        //atualizar campo dataUltimaAtividade
 
+        Agente agente = this.agenteRepository.findById(agenteId)
+                .map(agente1 -> {
 
+                    agente1.setDataUltimaAtividade(LocalDateTime.now());
+                    this.agenteRepository.save(agente1);
+                    return agente1;
+
+                }).orElseThrow(() -> new AgenteNaoEncontradoException(agenteId));
+
+        MetricasDispositivo metricasDispositivo = this.enviarMetricasMapper.toEntity(requestDTO);
+        metricasDispositivo.setAgente(agente);
+
+        return this.enviarMetricasMapper.toResponse(this.metricasDispositivoRepository.save(metricasDispositivo));
     }
-
-
-
-//    public EnviarLogsResponseDTO enviarLogs(){
-//        // logica para receber e armazenar os logs enviados pelo agente
-//        return null;
-//    }
 }

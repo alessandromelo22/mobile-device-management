@@ -11,7 +11,6 @@ public class BuscarComandosPendentesResponseDTO {
     private Long agenteId;
     private List<ComandoResumoResponseDTO> comandosResumoResponseDTO;
 
-//  private LocalDateTime dataConsulta; // Data e hora da consulta
 
 
 

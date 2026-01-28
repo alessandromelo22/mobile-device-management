@@ -6,6 +6,7 @@ import com.alessandromelo.dto.agente.AgenteResumoResponseDTO;
 import com.alessandromelo.entity.Agente;
 import com.alessandromelo.entity.Dispositivo;
 import com.alessandromelo.enums.AgenteStatus;
+import com.alessandromelo.enums.ComandoStatus;
 import com.alessandromelo.exception.agente.AgenteNaoEncontradoException;
 import com.alessandromelo.exception.dispositivo.DispositivoNaoEncontradoException;
 import com.alessandromelo.mapper.AgenteMapper;
@@ -66,6 +67,8 @@ public class AgenteService {
     public AgenteResponseDTO cadastrarNovoAgente(AgenteRequestDTO novoAgenteDTO) {
 
         Agente agente = this.agenteMapper.toEntity(novoAgenteDTO);
+        agente.setStatus(AgenteStatus.ATIVO);
+        agente.setDataUltimaAtividade(LocalDateTime.now());
 
         if(novoAgenteDTO.getDispositivoId() != null){
 
