@@ -71,6 +71,7 @@ public class DispositivoService {
         }
 
         Dispositivo dispositivo = this.dispositivoMapper.toEntity(novoDispositivoDTO);
+        dispositivo.setStatus(DispositivoStatus.ATIVO);
 
         if(novoDispositivoDTO.getUsuarioId() != null){
 

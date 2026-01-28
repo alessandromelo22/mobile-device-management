@@ -37,6 +37,8 @@ public class ComandoController {
         return ResponseEntity.ok(this.comandoService.buscarTodosComandos());
     }
 
+
+
     @Operation(
             summary = "Buscar Comandos pelo status",
             description = "Retorna uma lista com os Comandos que possuem um status específico")
@@ -86,9 +88,9 @@ public class ComandoController {
 
 
 ////TEMPORÁRIO: SÓ PARA TESTES
-//    @DeleteMapping("/{comandoId}")
-//    public ResponseEntity<Void> deletarComando(@PathVariable Long comandoId){
-//        this.comandoService.deletarComando(comandoId);
-//        return ResponseEntity.noContent().build();
-//    }
+    @DeleteMapping("/{comandoId}")
+    public ResponseEntity<Void> deletarComando(@PathVariable Long comandoId){
+        this.comandoService.deletarComando(comandoId);
+        return ResponseEntity.noContent().build();
+    }
 }

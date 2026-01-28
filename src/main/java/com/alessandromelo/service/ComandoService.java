@@ -5,6 +5,7 @@ import com.alessandromelo.dto.comando.ComandoResponseDTO;
 import com.alessandromelo.entity.Agente;
 import com.alessandromelo.entity.Comando;
 import com.alessandromelo.enums.ComandoStatus;
+import com.alessandromelo.enums.ComandoTipo;
 import com.alessandromelo.exception.agente.AgenteNaoEncontradoException;
 import com.alessandromelo.exception.comando.ComandoNaoEncontradoException;
 import com.alessandromelo.mapper.ComandoMapper;
@@ -12,6 +13,7 @@ import com.alessandromelo.repository.AgenteRepository;
 import com.alessandromelo.repository.ComandoRepository;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -61,6 +63,8 @@ public class ComandoService {
                 .orElseThrow(() -> new AgenteNaoEncontradoException(novoComandoDTO.getAgenteId()));
 
         comando.setAgente(agente);
+        comando.setStatus(ComandoStatus.PENDENTE);
+        comando.setDataCriacao(LocalDateTime.now());
 
         return this.comandoMapper.toResponseDTO(this.comandoRepository.save(comando));
 

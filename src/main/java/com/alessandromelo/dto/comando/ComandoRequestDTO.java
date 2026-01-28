@@ -2,10 +2,11 @@ package com.alessandromelo.dto.comando;
 
 import com.alessandromelo.enums.ComandoTipo;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 
 public class ComandoRequestDTO {
 
-    @NotBlank(message = "O tipo do Comando deve ser informado!")
+    @NotNull(message = "O tipo do Comando deve ser informado!")
     private ComandoTipo tipo;
     private String parametros; //Parâmetros adicionais para o comando (por exemplo: motivo do bloqueio, versão da atualização etc.), geralmente em formato JSON ou String
     private Long agenteId;
