@@ -5,7 +5,6 @@ import com.alessandromelo.dto.comando.ComandoResponseDTO;
 import com.alessandromelo.entity.Agente;
 import com.alessandromelo.entity.Comando;
 import com.alessandromelo.enums.ComandoStatus;
-import com.alessandromelo.enums.ComandoTipo;
 import com.alessandromelo.exception.agente.AgenteNaoEncontradoException;
 import com.alessandromelo.exception.comando.ComandoNaoEncontradoException;
 import com.alessandromelo.mapper.ComandoMapper;
@@ -15,6 +14,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class ComandoService {
@@ -32,9 +32,13 @@ public class ComandoService {
     }
 
     //GET
-    public List<ComandoResponseDTO> buscarTodosComandos(){
+    public List<ComandoResponseDTO> buscarTodosComandosVinculadosAoAgente(Long agenteId){
 
-        List<Comando> comandos = this.comandoRepository.findAll();
+        Agente agente = this.agenteRepository.findById(agenteId)
+                .orElseThrow(() -> new AgenteNaoEncontradoException(agenteId));
+
+        List<Comando> comandos = this.comandoRepository.findByAgenteId(agenteId);
+
         return comandos.stream().map(this.comandoMapper::toResponseDTO).toList();
     }
 

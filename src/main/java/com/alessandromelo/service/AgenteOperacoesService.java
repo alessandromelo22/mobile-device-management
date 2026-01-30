@@ -93,7 +93,7 @@ public class AgenteOperacoesService {
      */
 
     public BuscarComandosPendentesResponseDTO buscarComandosPendentes(Long agenteId){
-        //atualizar o campo dataUltimaAtividade
+
         Agente agente = this.agenteRepository.findById(agenteId)
                 .orElseThrow (() -> new AgenteNaoEncontradoException(agenteId));
 

@@ -16,5 +16,6 @@ public interface ComandoRepository extends JpaRepository<Comando, Long> {
     //retorna todos os comandos de um Status especifico
     List<Comando> findByStatus(ComandoStatus status);
 
-    //Aparentemente não há necessidade de métodos de validação
+    //retorna todos os comandos de um agente específico
+    List<Comando> findByAgenteId(Long agenteId);
 }

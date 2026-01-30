@@ -108,9 +108,9 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(AgenteNaoEncontradoException.class)
     public ResponseEntity<ApiError> handleAgenteNaoEncontradoException (AgenteNaoEncontradoException ex,
                                                                         HttpServletRequest request){
-        //400
-        ApiError error = new ApiError(HttpStatus.BAD_REQUEST,ex.getMessage(), request.getRequestURI());
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
+        //404
+        ApiError error = new ApiError(HttpStatus.NOT_FOUND,ex.getMessage(), request.getRequestURI());
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
     }
 
 

@@ -31,10 +31,20 @@ public class ComandoController {
 
 
 
-    //Verificar se é viavel manter esse endpoint
-    @GetMapping
-    public ResponseEntity<List<ComandoResponseDTO>> buscarTodosComandos(){
-        return ResponseEntity.ok(this.comandoService.buscarTodosComandos());
+    @Operation(
+            summary = "Buscar todos Comandos de um Agente específico",
+            description = "Retorna uma lista com todos Comandos vinculados ao Agente"
+    )
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Comandos retornados com sucesso!"),
+            @ApiResponse(responseCode = "400", description = "ID informado inválido!"),
+            @ApiResponse(responseCode = "404", description = "Agente não encontrado!")
+    })
+    @GetMapping("/agentes/{agenteId}")
+    public ResponseEntity<List<ComandoResponseDTO>> buscarTodosComandosVinculadosAoAgente(
+            @Parameter(description = "ID do Agente a ser buscado", example = "1")
+            @PathVariable Long agenteId){
+        return ResponseEntity.ok(this.comandoService.buscarTodosComandosVinculadosAoAgente(agenteId));
     }
 
 
