@@ -3,9 +3,10 @@ package com.alessandromelo.service;
 import com.alessandromelo.builders.departamento.DepartamentoBuilder;
 import com.alessandromelo.builders.departamento.DepartamentoRequestDTOBuilder;
 import com.alessandromelo.builders.departamento.DepartamentoResponseDTOBuilder;
+import com.alessandromelo.builders.usuario.UsuarioBuilder;
+import com.alessandromelo.builders.usuario.UsuarioResumoResponseDTOBuilder;
 import com.alessandromelo.dto.departamento.DepartamentoRequestDTO;
 import com.alessandromelo.dto.departamento.DepartamentoResponseDTO;
-import com.alessandromelo.dto.usuario.UsuarioRequestDTO;
 import com.alessandromelo.dto.usuario.UsuarioResumoResponseDTO;
 import com.alessandromelo.entity.Departamento;
 import com.alessandromelo.entity.Usuario;
@@ -33,8 +34,6 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 class DepartamentoServiceTest {
 
-    @Mock
-    private Departamento departamento;
     @Mock
     private DepartamentoRepository departamentoRepository;
     @Mock
@@ -400,41 +399,46 @@ class DepartamentoServiceTest {
 
 
     @Test
-    @DisplayName("listarUsuariosDoDepartamento() deve lançar DepartamentoNaoEncotradoException")
+    @DisplayName("listarUsuariosDoDepartamento() deve retornar Lista de UsuarioResumoResponseDTO")
     void listarUsuariosDoDepartamentoDeveRetornarListaDeUsuarioResumoResponseDTO() {
         //Arrange:
         Departamento departamento = new DepartamentoBuilder().build();
-
-        Usuario usuario = new Usuario();
-        usuario.setId(3L);
-        usuario.setNome("Joaquim da Silva");
-        usuario.setEmail("jojoca69@gmail.com");
-        usuario.setMatricula("7004");
-        usuario.setDepartamento(departamento);
-
-
-        UsuarioResumoResponseDTO resumoResponseDTO = new UsuarioResumoResponseDTO();
-        resumoResponseDTO.setId(3L);
-        resumoResponseDTO.setNome("Joaquim da Silva");
-        resumoResponseDTO.setMatricula("7004");
-
+        Usuario usuario = new UsuarioBuilder().comDepartamento(departamento).build();
+        UsuarioResumoResponseDTO resumoResponseDTO = new UsuarioResumoResponseDTOBuilder().build();
 
         when(this.departamentoRepository.findById(1L)).thenReturn(Optional.of(departamento));
-        when(this.departamento.getUsuarios()).thenReturn(List.of(usuario));
+        when(this.usuarioRepository.findByDepartamentoId(1L)).thenReturn(List.of(usuario));
         when(this.usuarioMapper.toResumoResponseDTO(usuario)).thenReturn(resumoResponseDTO);
 
         //Act:
         List<UsuarioResumoResponseDTO> retorno = this.departamentoService.listarUsuariosDoDepartamento(1L);
+
         //Assert:
         Assertions.assertEquals(1, retorno.size());
         Assertions.assertNotNull(retorno);
 
         Assertions.assertAll(
-                () -> Assertions.assertEquals(3L, retorno.get(0).getId()),
-                () -> Assertions.assertEquals("Joaquim da Silva", retorno.get(0).getNome()),
-                () -> Assertions.assertEquals("7004", retorno.get(0).getMatricula())
+                () -> Assertions.assertEquals(1L, retorno.get(0).getId()),
+                () -> Assertions.assertEquals("Jorge da Silva", retorno.get(0).getNome()),
+                () -> Assertions.assertEquals("7001", retorno.get(0).getMatricula())
         );
 
         verify(this.usuarioMapper, times(1)).toResumoResponseDTO(usuario);
+    }
+
+    @Test
+    @DisplayName("listarTodosDepartamento() deve retornar uma lista vazia")
+    void listarUsuariosDoDepartamentoDeveRetornarListaVazia (){
+        //Arrange:
+        Departamento departamento = new DepartamentoBuilder().build();
+
+        when(this.departamentoRepository.findById(1L)).thenReturn(Optional.of(departamento));
+
+        //Act:
+        List<UsuarioResumoResponseDTO> retorno = this.departamentoService.listarUsuariosDoDepartamento(1L);
+
+        //Assert:
+        Assertions.assertTrue(retorno.isEmpty());
+        Assertions.assertNotNull(retorno);
     }
 }

@@ -3,6 +3,8 @@ package com.alessandromelo.repository;
 import com.alessandromelo.entity.Usuario;
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import java.util.List;
+
 public interface UsuarioRepository extends JpaRepository<Usuario, Long> {
 
     boolean existsByEmail(String email);
@@ -14,6 +16,8 @@ public interface UsuarioRepository extends JpaRepository<Usuario, Long> {
 
     //verifica se tem algum Usuario associado ao Departamento passado pelo Id
     boolean existsByDepartamentoId(Long departamentoId);
+
+    List<Usuario> findByDepartamentoId(Long departamentoId);
 
 
 }
