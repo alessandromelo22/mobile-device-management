@@ -52,6 +52,8 @@ class DepartamentoServiceTest {
     //Teste unitario deve garantir a lógica do metodo e não a arquitetura
 
 
+
+
     /**<p><b>listarTodosDepartamentos():</b></p>
      *
      *  <p>1- Deve retornar uma lista de DepartamentoResponseDTO</p>
@@ -98,14 +100,11 @@ class DepartamentoServiceTest {
 
 
 
-
-
     /**<p><b>buscarDepartamentoPorId():</b></p>
      *
      *  <p>1- Deve lançar DepartamentoNaoEncontradoException</p>
      *  <p>2- Deve retornar um DepartamentoResponseDTO vindo do toResponseDTO()</p>
      */
-
     @Test
     @DisplayName("buscarDepartamentoPorId() deve lançar DepartamentoNaoEncontradoException")
     void buscarDepartamentoPorIdDeveLancarDepartamentoNaoEncontradoException (){
@@ -119,7 +118,6 @@ class DepartamentoServiceTest {
 
         verify(this.departamentoMapper, never()).toResponseDTO(any());
     }
-
 
     @Test
     @DisplayName("buscarDepartamentoPorId() deve retornar DepartamentoResponseDTO")
@@ -153,7 +151,7 @@ class DepartamentoServiceTest {
      *
      */
     @Test
-    @DisplayName("cadastrarDepartamento() deve lançar NomeJaCadastradoException")
+    @DisplayName("criarNovoDepartamento() deve lançar NomeJaCadastradoException")
     void criarNovoDepartamentoDeveLancarNomeJaCadastradoException(){
         //Arrange
         DepartamentoRequestDTO requestDTO = new DepartamentoRequestDTOBuilder().build();
@@ -169,7 +167,7 @@ class DepartamentoServiceTest {
     }
 
     @Test
-    @DisplayName("cadastrarDepartamento() deve lançar SiglaJaCadastradaException")
+    @DisplayName("criarNovoDepartamento() deve lançar SiglaJaCadastradaException")
     void criarNovoDepartamentoDeveLancarSiglaJaCadastradaException(){
         //Arrange
         DepartamentoRequestDTO requestDTO = new DepartamentoRequestDTOBuilder().build();
@@ -186,8 +184,8 @@ class DepartamentoServiceTest {
 
 
     @Test
-    @DisplayName("criarDepartamento() deve retornar DepartamentoResponseDTO")
-    void criarDepartamentoDeveRetornarDepartamentoResponseDTO() {
+    @DisplayName("criarNovoDepartamento() deve retornar DepartamentoResponseDTO")
+    void criarNovoDepartamentoDeveRetornarDepartamentoResponseDTO() {
         //Arrange:
         DepartamentoRequestDTO requestDTO = new DepartamentoRequestDTOBuilder().build();
         Departamento departamento = new DepartamentoBuilder().build();
@@ -236,7 +234,6 @@ class DepartamentoServiceTest {
         //Arrange:
         DepartamentoRequestDTO requestDTO = new DepartamentoRequestDTOBuilder().build();
         when(this.departamentoRepository.findById(2L)).thenReturn(Optional.empty());
-
 
         //Act:
         //Assert:
@@ -320,6 +317,7 @@ class DepartamentoServiceTest {
     }
 
 
+
     /**<p><b>removerDepartamento():</b></p>
      *
      *  <p>1-Deve lançar DepartamentoNaoEncontradoException</p>
@@ -372,8 +370,6 @@ class DepartamentoServiceTest {
         //Assert:
         verify(this.departamentoRepository, times(1)).delete(departamento);
     }
-
-
 
 
 
