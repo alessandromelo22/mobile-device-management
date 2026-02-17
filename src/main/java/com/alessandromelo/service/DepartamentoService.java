@@ -112,8 +112,10 @@ public class DepartamentoService {
 //Listar Usuarios que pertencem ao Departamento:
     public List<UsuarioResumoResponseDTO> listarUsuariosDoDepartamento(Long departamentoId){
 
-        List<Usuario> usuarios = this.departamentoRepository.findById(departamentoId).map(Departamento::getUsuarios)
+        Departamento departamento = this.departamentoRepository.findById(departamentoId)
                 .orElseThrow(() -> new DepartamentoNaoEncontradoException(departamentoId));
+
+        List<Usuario> usuarios = this.usuarioRepository.findByDepartamentoId(departamentoId);
 
         return usuarios.stream().map(this.usuarioMapper::toResumoResponseDTO).toList();
     }
