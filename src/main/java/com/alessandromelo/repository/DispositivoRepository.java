@@ -20,4 +20,6 @@ public interface DispositivoRepository extends JpaRepository<Dispositivo, Long> 
 
     //Retorna uma lista contendo os Dispositivos com um status específico
     List<Dispositivo> findByStatus(DispositivoStatus status);
+
+    List<Dispositivo> findByUsuarioId(Long usuarioId);
 }

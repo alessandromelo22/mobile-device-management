@@ -141,13 +141,15 @@ public class UsuarioService {
 //Listar Dispositivos cadastrados em um determinado Usuario   (CERTO)
     public List<DispositivoResumoResponseDTO> listarDispositivosVinculadosAoUsuario(Long usuarioId){
 
-        List<Dispositivo> dispositivos = this.usuarioRepository.findById(usuarioId).map(Usuario::getDispositivos)
+        Usuario usuario = this.usuarioRepository.findById(usuarioId)
                 .orElseThrow(() -> new UsuarioNaoEncontradoException(usuarioId));
+
+        List<Dispositivo> dispositivos = this.dispositivoRepository.findByUsuarioId(usuarioId);
 
         return dispositivos.stream().map(this.dispositivoMapper::toResumoResponseDTO).toList();
     }
 
-//Setar Dispositivo a um Usuario:
+//Setar Dispositivo a um Usuario: VERIFICAR SE ESSE METODO DEVERIA FICAR AQUI OU DENTRO DE DISPOSITIVOSERVICE
     public UsuarioDispositivoResponseDTO vincularDispositivoAoUsuario(Long usuarioId, Long dispositivoId){
 
         Usuario usuario = this.usuarioRepository.findById(usuarioId)

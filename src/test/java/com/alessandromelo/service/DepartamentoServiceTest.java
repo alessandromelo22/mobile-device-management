@@ -202,7 +202,6 @@ class DepartamentoServiceTest {
         DepartamentoResponseDTO retorno = this.departamentoService.criarNovoDepartamento(requestDTO);
 
         //Assert:
-
         verify(this.departamentoRepository).save(this.departamentoCaptor.capture());
         Departamento capturado = this.departamentoCaptor.getValue();
         Assertions.assertAll(
@@ -245,7 +244,7 @@ class DepartamentoServiceTest {
 
     @Test
     @DisplayName("atualizarDepartamento() deve lançar NomeJaCadastradaException")
-    void atualizarDepartamentoDeveLancarNomeJaCadastrado(){
+    void atualizarDepartamentoDeveLancarNomeJaCadastradoException(){
         //Arrange:
         DepartamentoRequestDTO requestDTO = new DepartamentoRequestDTOBuilder().build();
         Departamento departamento = new DepartamentoBuilder().build();
@@ -263,7 +262,7 @@ class DepartamentoServiceTest {
 
     @Test
     @DisplayName("atualizarDepartamento() deve lançar SiglaJaCadastradaException")
-    void atualizarDepartamentoDeveLancarSiglaJaCadastrado(){
+    void atualizarDepartamentoDeveLancarSiglaJaCadastradoException(){
         //Arrange:
         DepartamentoRequestDTO requestDTO = new DepartamentoRequestDTOBuilder().build();
         Departamento departamento = new DepartamentoBuilder().build();
@@ -322,11 +321,11 @@ class DepartamentoServiceTest {
      *
      *  <p>1-Deve lançar DepartamentoNaoEncontradoException</p>
      *  <p>2-Deve lançar EntidadeEmUsoException</p>
-     *  <p>2-Deve chamar metodo delete()</p>
+     *  <p>3-Deve chamar metodo delete()</p>
      */
     @Test
     @DisplayName("removerDepartamento() deve lançar DepartamentoNaoEncontradoException")
-    void removerDepartamentoDeveLancarDepartamentoNaoEncontrado() {
+    void removerDepartamentoDeveLancarDepartamentoNaoEncontradoException() {
         //Arrange:
         when(this.departamentoRepository.findById(1L)).thenReturn(Optional.empty());
 
@@ -335,7 +334,7 @@ class DepartamentoServiceTest {
         Assertions.assertThrows(DepartamentoNaoEncontradoException.class,
                 () -> this.departamentoService.removerDepartamentoPorId(1L));
 
-        verify(this.departamentoRepository, never()).deleteById(any());
+        verify(this.departamentoRepository, never()).delete(any());
     }
 
     @Test
@@ -352,7 +351,7 @@ class DepartamentoServiceTest {
         Assertions.assertThrows(EntidadeEmUsoException.class,
                 () -> this.departamentoService.removerDepartamentoPorId(1L));
 
-        verify(this.departamentoRepository, never()).deleteById(any());
+        verify(this.departamentoRepository, never()).delete(any());
     }
 
     @Test
@@ -381,7 +380,7 @@ class DepartamentoServiceTest {
      */
     @Test
     @DisplayName("listarUsuariosDoDepartamento() deve lançar DepartamentoNaoEncotradoException")
-    void listarUsuariosDoDepartamentoDeveLancarDepartamentoNaoEncontrado() {
+    void listarUsuariosDoDepartamentoDeveLancarDepartamentoNaoEncontradoException() {
         //Arrange:
         when(this.departamentoRepository.findById(1L)).thenReturn(Optional.empty());
 
@@ -429,6 +428,7 @@ class DepartamentoServiceTest {
         Departamento departamento = new DepartamentoBuilder().build();
 
         when(this.departamentoRepository.findById(1L)).thenReturn(Optional.of(departamento));
+        when(this.usuarioRepository.findByDepartamentoId(1L)).thenReturn(List.of());
 
         //Act:
         List<UsuarioResumoResponseDTO> retorno = this.departamentoService.listarUsuariosDoDepartamento(1L);
