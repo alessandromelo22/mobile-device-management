@@ -422,7 +422,7 @@ class DepartamentoServiceTest {
     }
 
     @Test
-    @DisplayName("listarTodosDepartamento() deve retornar uma lista vazia")
+    @DisplayName("listarUsuariosDoDepartamento() deve retornar uma lista vazia")
     void listarUsuariosDoDepartamentoDeveRetornarListaVazia (){
         //Arrange:
         Departamento departamento = new DepartamentoBuilder().build();

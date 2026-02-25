@@ -2,6 +2,7 @@ package com.alessandromelo.controller;
 
 import com.alessandromelo.dto.dispositivo.DispositivoRequestDTO;
 import com.alessandromelo.dto.dispositivo.DispositivoResponseDTO;
+import com.alessandromelo.dto.dispositivo.DispositivoUsuarioResponseDTO;
 import com.alessandromelo.enums.DispositivoStatus;
 import com.alessandromelo.service.DispositivoService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -124,6 +125,7 @@ public class DispositivoController {
             @ApiResponse(responseCode = "404", description = "Dispositivo não encontrado"),
             @ApiResponse(responseCode = "409", description = "Exclusão não realizada - Dispositivo está vinculado a outro registro")
     })
+
     @DeleteMapping("/{dispositivoId}")
     public ResponseEntity<Void> removerDispositivoPorId(
             @Parameter(description = "ID do Dispositivo a ser excluído", example = "3")
@@ -133,5 +135,23 @@ public class DispositivoController {
         return ResponseEntity.noContent().build(); //204
     }
 
+    //Setar Dispositivo a um Usuario:
+    @Operation(
+            summary = "Vincular um Dispositivo a um Usuario",
+            description = "Vincula um Dispositivo existente a um Usuario, com base nos IDs informados")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Dispositivo vinculado com sucesso"),
+            @ApiResponse(responseCode = "400", description = "ID informado inválido"),
+            @ApiResponse(responseCode = "404", description = "Usuario não encontrado"),
+            @ApiResponse(responseCode = "404", description = "Dispositivo não encontrado")
+    })
+    @PutMapping("/{dispositivoId}/usuarios/{usuarioId}")
+    public ResponseEntity<DispositivoUsuarioResponseDTO> vincularDispositivoAoUsuario(
+            @Parameter(description = "ID do Dispositivo a ser vinculado", example = "2")
+            @PathVariable Long dispositivoId,
+            @Parameter(description = "ID do Usuario que recebera um Dispositivo", example = "2")
+            @PathVariable Long usuarioId){
 
+        return ResponseEntity.ok(this.dispositivoService.vincularDispositivoAoUsuario(dispositivoId, usuarioId));
+    }
 }

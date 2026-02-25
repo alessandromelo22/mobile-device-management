@@ -4,22 +4,19 @@ import com.alessandromelo.builders.departamento.DepartamentoBuilder;
 import com.alessandromelo.builders.departamento.DepartamentoRequestDTOBuilder;
 import com.alessandromelo.builders.dispositivo.DispositivoBuilder;
 import com.alessandromelo.builders.dispositivo.DispositivoResumoResponseDTOBuilder;
-import com.alessandromelo.builders.usuario.UsuarioBuilder;
-import com.alessandromelo.builders.usuario.UsuarioRequestDTOBuilder;
-import com.alessandromelo.builders.usuario.UsuarioResponseDTOBuilder;
-import com.alessandromelo.builders.usuario.UsuarioResumoResponseDTOBuilder;
+import com.alessandromelo.builders.usuario.*;
+import com.alessandromelo.csv.importer.UsuarioCsvImporter;
 import com.alessandromelo.dto.departamento.DepartamentoRequestDTO;
 import com.alessandromelo.dto.departamento.DepartamentoResponseDTO;
 import com.alessandromelo.dto.dispositivo.DispositivoResumoResponseDTO;
-import com.alessandromelo.dto.usuario.UsuarioRequestDTO;
-import com.alessandromelo.dto.usuario.UsuarioResponseDTO;
-import com.alessandromelo.dto.usuario.UsuarioResumoResponseDTO;
+import com.alessandromelo.dto.usuario.*;
 import com.alessandromelo.entity.Departamento;
 import com.alessandromelo.entity.Dispositivo;
 import com.alessandromelo.entity.Usuario;
 import com.alessandromelo.enums.DispositivoStatus;
 import com.alessandromelo.exception.departamento.DepartamentoNaoEncontradoException;
 import com.alessandromelo.exception.departamento.NomeJaCadastradoException;
+import com.alessandromelo.exception.dispositivo.DispositivoNaoEncontradoException;
 import com.alessandromelo.exception.global.EntidadeEmUsoException;
 import com.alessandromelo.exception.usuario.EmailJaCadastradoException;
 import com.alessandromelo.exception.usuario.MatriculaJaCadastradaException;
@@ -35,6 +32,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.*;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.Optional;
@@ -57,6 +55,9 @@ class UsuarioServiceTest {
     DispositivoMapper dispositivoMapper;
     @Mock
     DispositivoRepository dispositivoRepository;
+    @Mock
+    UsuarioCsvImporter usuarioCsvImporter;
+
 
     @Captor
     ArgumentCaptor<Usuario> usuarioCaptor;
@@ -535,10 +536,142 @@ class UsuarioServiceTest {
 
 
 
-    /**<p><b>vincularDispositivoAoUsuario:</b></p>
+    /**<p><b>vincularUsuarioAoDepartamento():</b></p>
      *
      *  <p>1-Deve lançar UsuarioNaoEncontradoException </p>
-     *  <p>2-Deve retornar lista de DispositivoResumoResponse </p>
-     *  <p>3-Deve retornar lista vazia </p>
+     *  <p>2-Deve lançar DepartamentoNaoEncontradoException </p>
+     *  <p>3-Deve retornar um UsuarioDepartamentoResponseDTO </p>
      */
+    @Test
+    @DisplayName("vincularUsuarioAoDepartamento() deve lançar UsuarioNaoEncontradoException")
+    void vincularUsuarioAoDepartamentoDeveLancarUsuarioNaoEncontradoException () {
+        //Arrange:
+        when(this.usuarioRepository.findById(1L)).thenReturn(Optional.empty());
+
+        //Act:
+        //Assert:
+        Assertions.assertThrows(UsuarioNaoEncontradoException.class,
+                () -> this.usuarioService.vincularUsuarioAoDepartamento(1L, 1L));
+
+        verify(this.usuarioRepository, never()).save(any());
+        verify(this.usuarioMapper, never()).toUsuarioDepartamentoResponseDTO(any(), any());
+    }
+
+    @Test
+    @DisplayName("vincularUsuarioAoDepartamento() deve lançar DepartamentoNaoEncontradoException")
+    void vincularUsuarioAoDepartamentoDeveLancarDepartamentoNaoEncontradoException () {
+        //Arrange:
+        Usuario usuario = new UsuarioBuilder().build();
+
+        when(this.usuarioRepository.findById(1L)).thenReturn(Optional.of(usuario));
+        when(this.departamentoRepository.findById(1L)).thenReturn(Optional.empty());
+
+        //Act:
+        //Assert:
+        Assertions.assertThrows(DepartamentoNaoEncontradoException.class,
+                () -> this.usuarioService.vincularUsuarioAoDepartamento(1L, 1L));
+
+        verify(this.usuarioRepository, never()).save(any());
+        verify(this.usuarioMapper, never()).toUsuarioDepartamentoResponseDTO(any(), any());
+    }
+
+    @Test
+    @DisplayName("vincularUsuarioAoDepartamento() deve retornar um UsuarioDepartamentoResponseDTO")
+    void vincularUsuarioAoDepartamentoDeveRetornarUsuarioDepartamentoResponseDTO () {
+        //Arrange:
+        Usuario usuario = new UsuarioBuilder().build();
+        Departamento departamento = new DepartamentoBuilder().build();
+        UsuarioDepartamentoResponseDTO responseDTO = new UsuarioDepartamentoResponseDTOBuilder().build();
+
+
+        when(this.usuarioRepository.findById(1L)).thenReturn(Optional.of(usuario));
+        when(this.departamentoRepository.findById(1L)).thenReturn(Optional.of(departamento));
+        when(this.usuarioRepository.save(usuario)).thenReturn(usuario);
+        when(this.usuarioMapper.toUsuarioDepartamentoResponseDTO(usuario, departamento)).thenReturn(responseDTO);
+
+        //Act:
+        UsuarioDepartamentoResponseDTO retorno = this.usuarioService.vincularUsuarioAoDepartamento(1L,1L);
+
+        //Assert:
+        Assertions.assertAll(
+                () -> Assertions.assertEquals(1L, retorno.getUsuarioId()),
+                () -> Assertions.assertEquals("Jorge da Silva", retorno.getNome()),
+                () -> Assertions.assertEquals("7001", retorno.getMatricula())
+        );
+
+
+        verify(this.usuarioRepository).save(usuarioCaptor.capture());
+        Usuario capturado = this.usuarioCaptor.getValue();
+
+        Assertions.assertAll(
+                () -> Assertions.assertEquals(1L, capturado.getDepartamento().getId()),
+                () -> Assertions.assertEquals("Recursos Humanos", capturado.getDepartamento().getNome())
+        );
+    }
+
+
+
+    /**<p><b>cadastrarUsuariosCsv():</b></p>
+     *
+     *  <p>1-Deve lançar DepartamentoNaoEncontradoException </p>
+     *  <p>2-Deve lançar MatriculaJaCadastradaException </p>
+     *  <p>3-Deve retornar um EmailJaCadastradoException </p>
+     *  <p>4-Deve retornar um Long </p>
+     */
+    @Test
+    @DisplayName("cadastrarUsuariosCsv() deve lançar DepartamentoNaoEncontradoException")
+    void cadastrarUsuariosCsvDeveLancarDepartamentoNaoEncontradoException (){
+        //Arrange:
+        MultipartFile arquivo = mock(MultipartFile.class);
+        UsuarioImportDTO usuarioImportDTO = new UsuarioImportDTOBuilder().build();
+
+        when(this.usuarioCsvImporter.lerCsv(arquivo)).thenReturn(List.of(usuarioImportDTO));
+        when(this.departamentoRepository.existsByNome(usuarioImportDTO.getNomeDepartamento())).thenReturn(false);
+
+        //Act:
+        //Assert:
+        Assertions.assertThrows(DepartamentoNaoEncontradoException.class,
+                () -> this.usuarioService.cadastrarUsuariosCsv(arquivo));
+
+        verify(this.usuarioRepository, never()).save(any());
+    }
+
+    @Test
+    @DisplayName("cadastrarUsuariosCsv() deve lançar MatriculaJaCadastradaException")
+    void cadastrarUsuariosCsvDeveLancarMatriculaJaCadastradaException (){
+        //Arrange:
+        MultipartFile arquivo = mock(MultipartFile.class);
+        UsuarioImportDTO usuarioImportDTO = new UsuarioImportDTOBuilder().build();
+
+        when(this.usuarioCsvImporter.lerCsv(arquivo)).thenReturn(List.of(usuarioImportDTO));
+        when(this.departamentoRepository.existsByNome(usuarioImportDTO.getNomeDepartamento())).thenReturn(true);
+        when(this.usuarioRepository.existsByMatricula(usuarioImportDTO.getMatricula())).thenReturn(true);
+
+        //Act:
+        //Assert:
+        Assertions.assertThrows(MatriculaJaCadastradaException.class,
+                () -> this.usuarioService.cadastrarUsuariosCsv(arquivo));
+
+        verify(this.usuarioRepository, never()).save(any());
+    }
+
+    @Test
+    @DisplayName("cadastrarUsuariosCsv() deve lançar EmailJaCadastradaException")
+    void cadastrarUsuariosCsvDeveLancarEmailJaCadastradaException (){
+        //Arrange:
+        MultipartFile arquivo = mock(MultipartFile.class);
+        UsuarioImportDTO usuarioImportDTO = new UsuarioImportDTOBuilder().build();
+
+        when(this.usuarioCsvImporter.lerCsv(arquivo)).thenReturn(List.of(usuarioImportDTO));
+        when(this.departamentoRepository.existsByNome(usuarioImportDTO.getNomeDepartamento())).thenReturn(true);
+        when(this.usuarioRepository.existsByMatricula(usuarioImportDTO.getMatricula())).thenReturn(false);
+        when(this.usuarioRepository.existsByEmail(usuarioImportDTO.getEmail())).thenReturn(true);
+
+        //Act:
+        //Assert:
+        Assertions.assertThrows(EmailJaCadastradoException.class,
+                () -> this.usuarioService.cadastrarUsuariosCsv(arquivo));
+
+        verify(this.usuarioRepository, never()).save(any());
+    }
 }
