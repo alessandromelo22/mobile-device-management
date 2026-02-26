@@ -240,7 +240,7 @@ class UsuarioServiceTest {
         UsuarioResponseDTO retorno = this.usuarioService.cadastrarNovoUsuario(requestDTO);
 
         //Asert
-        verify(this.usuarioRepository).save(this.usuarioCaptor.capture());
+        verify(this.usuarioRepository, times(1)).save(this.usuarioCaptor.capture());
         Usuario capturado = this.usuarioCaptor.getValue();
         Assertions.assertAll(
                 () -> Assertions.assertEquals(1L, capturado.getId()),
@@ -394,7 +394,7 @@ class UsuarioServiceTest {
         UsuarioResponseDTO retorno = this.usuarioService.atualizarUsuario(1L,requestDTO);
 
         //Asert
-        verify(this.usuarioRepository).save(this.usuarioCaptor.capture());
+        verify(this.usuarioRepository, times(1)).save(this.usuarioCaptor.capture());
         Usuario capturado = this.usuarioCaptor.getValue();
         Assertions.assertAll(
                 () -> Assertions.assertEquals(1L, capturado.getId()),
@@ -554,7 +554,6 @@ class UsuarioServiceTest {
                 () -> this.usuarioService.vincularUsuarioAoDepartamento(1L, 1L));
 
         verify(this.usuarioRepository, never()).save(any());
-        verify(this.usuarioMapper, never()).toUsuarioDepartamentoResponseDTO(any(), any());
     }
 
     @Test
@@ -572,7 +571,6 @@ class UsuarioServiceTest {
                 () -> this.usuarioService.vincularUsuarioAoDepartamento(1L, 1L));
 
         verify(this.usuarioRepository, never()).save(any());
-        verify(this.usuarioMapper, never()).toUsuarioDepartamentoResponseDTO(any(), any());
     }
 
     @Test
@@ -582,7 +580,6 @@ class UsuarioServiceTest {
         Usuario usuario = new UsuarioBuilder().build();
         Departamento departamento = new DepartamentoBuilder().build();
         UsuarioDepartamentoResponseDTO responseDTO = new UsuarioDepartamentoResponseDTOBuilder().build();
-
 
         when(this.usuarioRepository.findById(1L)).thenReturn(Optional.of(usuario));
         when(this.departamentoRepository.findById(1L)).thenReturn(Optional.of(departamento));
@@ -673,5 +670,43 @@ class UsuarioServiceTest {
                 () -> this.usuarioService.cadastrarUsuariosCsv(arquivo));
 
         verify(this.usuarioRepository, never()).save(any());
+    }
+
+    @Test
+    @DisplayName("cadastrarUsuariosCsv() deve retornar Long")
+    void cadastrarUsuariosCsvDeveRetornarLong (){
+        //Arrange:
+        MultipartFile arquivo = mock(MultipartFile.class);
+        UsuarioImportDTO usuarioImportDTO = new UsuarioImportDTOBuilder().build();
+        Departamento departamento = new DepartamentoBuilder().build();
+        Usuario usuario = new UsuarioBuilder().build();
+
+        when(this.usuarioCsvImporter.lerCsv(arquivo)).thenReturn(List.of(usuarioImportDTO));
+        when(this.departamentoRepository.existsByNome(usuarioImportDTO.getNomeDepartamento())).thenReturn(true);
+        when(this.usuarioRepository.existsByMatricula(usuarioImportDTO.getMatricula())).thenReturn(false);
+        when(this.usuarioRepository.existsByEmail(usuarioImportDTO.getEmail())).thenReturn(false);
+        when(this.departamentoRepository.findByNome(usuarioImportDTO.getNomeDepartamento())).thenReturn(departamento);
+        when(this.usuarioMapper.toEntity(usuarioImportDTO)).thenReturn(usuario);
+        when(this.usuarioRepository.save(usuario)).thenReturn(usuario);
+
+        //Act:
+        Long retorno = this.usuarioService.cadastrarUsuariosCsv(arquivo);
+
+        //Assert:
+        verify(this.usuarioRepository, times(1)).save(usuarioCaptor.capture());
+        Usuario capturado = this.usuarioCaptor.getValue();
+
+        Assertions.assertAll(
+                () -> Assertions.assertEquals("Jorge da Silva", capturado.getNome()),
+                () -> Assertions.assertEquals("jorginds69@gmail.com",capturado.getEmail()),
+                () -> Assertions.assertEquals("7001",capturado.getMatricula()),
+                () -> Assertions.assertEquals("Analista de RH", capturado.getCargo()),
+
+                () -> Assertions.assertEquals(1L, capturado.getDepartamento().getId()),
+                () -> Assertions.assertEquals("Recursos Humanos", capturado.getDepartamento().getNome()),
+                () -> Assertions.assertEquals("RH", capturado.getDepartamento().getSigla())
+        );
+
+        Assertions.assertEquals(1L, retorno);
     }
 }

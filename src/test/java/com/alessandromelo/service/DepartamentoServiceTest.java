@@ -238,6 +238,7 @@ class DepartamentoServiceTest {
         //Assert:
         Assertions.assertThrows(DepartamentoNaoEncontradoException.class,
                 () ->this.departamentoService.atualizarDepartamento(2L, requestDTO));
+
         verify(this.departamentoRepository, never()).save(any());
     }
 
