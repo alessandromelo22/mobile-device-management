@@ -2,7 +2,6 @@ package com.alessandromelo.controller;
 
 import com.alessandromelo.dto.dispositivo.DispositivoResumoResponseDTO;
 import com.alessandromelo.dto.usuario.UsuarioDepartamentoResponseDTO;
-import com.alessandromelo.dto.usuario.UsuarioDispositivoResponseDTO;
 import com.alessandromelo.dto.usuario.UsuarioRequestDTO;
 import com.alessandromelo.dto.usuario.UsuarioResponseDTO;
 import com.alessandromelo.service.UsuarioService;
@@ -143,26 +142,6 @@ public class UsuarioController {
         return ResponseEntity.ok(this.usuarioService.listarDispositivosVinculadosAoUsuario(usuarioId));
     }
 
-
-//Setar Dispositivo a um Usuario:
-    @Operation(
-            summary = "Vincular um Dispositivo a um Usuario",
-            description = "Vincula um Dispositivo existente a um Usuario, com base nos IDs informados")
-    @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Dispositivo vinculado com sucesso"),
-            @ApiResponse(responseCode = "400", description = "ID informado inválido"),
-            @ApiResponse(responseCode = "404", description = "Usuario não encontrado"),
-            @ApiResponse(responseCode = "404", description = "Dispositivo não encontrado")
-    })
-    @PutMapping("/{usuarioId}/dispositivos/{dispositivoId}")
-    public ResponseEntity<UsuarioDispositivoResponseDTO> vincularDispositivoAoUsuario(
-            @Parameter(description = "ID do Usuario que recebera um Dispositivo", example = "2")
-            @PathVariable Long usuarioId,
-            @Parameter(description = "ID do Dispositivo a ser vinculado", example = "2")
-            @PathVariable Long dispositivoId){
-
-        return ResponseEntity.ok(this.usuarioService.vincularDispositivoAoUsuario(usuarioId,dispositivoId));
-    }
 
 
 //Setar Usuario a um Departamento:

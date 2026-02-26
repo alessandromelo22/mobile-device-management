@@ -15,7 +15,6 @@ import com.alessandromelo.repository.DepartamentoRepository;
 import com.alessandromelo.repository.DispositivoRepository;
 import com.alessandromelo.repository.UsuarioRepository;
 import com.alessandromelo.exception.departamento.DepartamentoNaoEncontradoException;
-import com.alessandromelo.exception.dispositivo.DispositivoNaoEncontradoException;
 import com.alessandromelo.exception.usuario.UsuarioNaoEncontradoException;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -141,26 +140,12 @@ public class UsuarioService {
 //Listar Dispositivos cadastrados em um determinado Usuario   (CERTO)
     public List<DispositivoResumoResponseDTO> listarDispositivosVinculadosAoUsuario(Long usuarioId){
 
-        List<Dispositivo> dispositivos = this.usuarioRepository.findById(usuarioId).map(Usuario::getDispositivos)
+        Usuario usuario = this.usuarioRepository.findById(usuarioId)
                 .orElseThrow(() -> new UsuarioNaoEncontradoException(usuarioId));
 
+        List<Dispositivo> dispositivos = this.dispositivoRepository.findByUsuarioId(usuarioId);
+
         return dispositivos.stream().map(this.dispositivoMapper::toResumoResponseDTO).toList();
-    }
-
-//Setar Dispositivo a um Usuario:
-    public UsuarioDispositivoResponseDTO vincularDispositivoAoUsuario(Long usuarioId, Long dispositivoId){
-
-        Usuario usuario = this.usuarioRepository.findById(usuarioId)
-                .orElseThrow(()-> new UsuarioNaoEncontradoException(usuarioId));
-
-        Dispositivo dispositivo = this.dispositivoRepository.findById(dispositivoId)
-                .orElseThrow(() -> new DispositivoNaoEncontradoException(dispositivoId));
-
-        dispositivo.setUsuario(usuario);
-
-        this.dispositivoRepository.save(dispositivo);
-
-        return this.usuarioMapper.toUsuarioDispositivoResponseDTO(usuario, dispositivo);
     }
 
 
@@ -185,9 +170,8 @@ public class UsuarioService {
      *     Realiza a leitura do arquivo, validação, parse para Entidades do tipo Usuario e por fim
      *     salva no banco de dados.
      *
-     *     @return um Long indicando a quantidade de registros salvos.
+     *     @return Long indicando a quantidade de registros salvos.
      */
-
     public Long cadastrarUsuariosCsv(MultipartFile arquivo){
 
         List<UsuarioImportDTO> dtosImport = this.usuarioCsvImporter.lerCsv(arquivo);

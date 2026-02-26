@@ -2,6 +2,7 @@ package com.alessandromelo.service;
 
 import com.alessandromelo.dto.dispositivo.DispositivoRequestDTO;
 import com.alessandromelo.dto.dispositivo.DispositivoResponseDTO;
+import com.alessandromelo.dto.dispositivo.DispositivoUsuarioResponseDTO;
 import com.alessandromelo.enums.DispositivoStatus;
 import com.alessandromelo.exception.dispositivo.DispositivoNaoEncontradoException;
 import com.alessandromelo.exception.dispositivo.NumeroDeSerieJaCadastradoException;
@@ -134,5 +135,19 @@ public class DispositivoService {
         this.dispositivoRepository.delete(dispositivo);
     }
 
+    //Setar Dispositivo a um Usuario:
+    public DispositivoUsuarioResponseDTO vincularDispositivoAoUsuario(Long dispositivoId, Long usuarioId){
 
+        Usuario usuario = this.usuarioRepository.findById(usuarioId)
+                .orElseThrow(()-> new UsuarioNaoEncontradoException(usuarioId));
+
+        Dispositivo dispositivo = this.dispositivoRepository.findById(dispositivoId)
+                .orElseThrow(() -> new DispositivoNaoEncontradoException(dispositivoId));
+
+        dispositivo.setUsuario(usuario);
+
+        this.dispositivoRepository.save(dispositivo);
+
+        return this.dispositivoMapper.toDispositivoUsuarioResponseDTO(dispositivo, usuario);
+    }
 }

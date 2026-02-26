@@ -3,7 +3,9 @@ package com.alessandromelo.mapper;
 import com.alessandromelo.dto.dispositivo.DispositivoRequestDTO;
 import com.alessandromelo.dto.dispositivo.DispositivoResponseDTO;
 import com.alessandromelo.dto.dispositivo.DispositivoResumoResponseDTO;
+import com.alessandromelo.dto.dispositivo.DispositivoUsuarioResponseDTO;
 import com.alessandromelo.entity.Dispositivo;
+import com.alessandromelo.entity.Usuario;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
@@ -13,12 +15,17 @@ public interface DispositivoMapper {
     //RequestDTO -> Entity:
     Dispositivo toEntity(DispositivoRequestDTO dispositivoRequestDTO);
 
-    //Entity -> DispositivoresponseDTO
+    //Entity -> DispositivoResponseDTO
     @Mapping(source = "usuario", target = "usuarioResumoResponseDTO")
     DispositivoResponseDTO toResponseDTO(Dispositivo dispositivo);
 
-    //Entity -> resumoResponseDTO:
+    //Entity -> DispositivoResumoResponseDTO:
     DispositivoResumoResponseDTO toResumoResponseDTO(Dispositivo dispositivo);
 
-    //Aparentemente está pronto
+    //Entity -> DispositivoUsuarioResponseDTO:
+    @Mapping(source = "dispositivo.id", target = "dispositivoId")
+    @Mapping(source = "dispositivo.modelo", target = "modelo")
+    @Mapping(source = "dispositivo.status", target = "status")
+    @Mapping(source = "usuario", target = "usuarioResumoResponseDTO")
+    DispositivoUsuarioResponseDTO toDispositivoUsuarioResponseDTO (Dispositivo dispositivo, Usuario usuario);
 }
