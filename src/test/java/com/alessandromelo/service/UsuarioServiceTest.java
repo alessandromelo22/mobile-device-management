@@ -1,13 +1,10 @@
 package com.alessandromelo.service;
 
 import com.alessandromelo.builders.departamento.DepartamentoBuilder;
-import com.alessandromelo.builders.departamento.DepartamentoRequestDTOBuilder;
 import com.alessandromelo.builders.dispositivo.DispositivoBuilder;
 import com.alessandromelo.builders.dispositivo.DispositivoResumoResponseDTOBuilder;
 import com.alessandromelo.builders.usuario.*;
 import com.alessandromelo.csv.importer.UsuarioCsvImporter;
-import com.alessandromelo.dto.departamento.DepartamentoRequestDTO;
-import com.alessandromelo.dto.departamento.DepartamentoResponseDTO;
 import com.alessandromelo.dto.dispositivo.DispositivoResumoResponseDTO;
 import com.alessandromelo.dto.usuario.*;
 import com.alessandromelo.entity.Departamento;
@@ -15,8 +12,6 @@ import com.alessandromelo.entity.Dispositivo;
 import com.alessandromelo.entity.Usuario;
 import com.alessandromelo.enums.DispositivoStatus;
 import com.alessandromelo.exception.departamento.DepartamentoNaoEncontradoException;
-import com.alessandromelo.exception.departamento.NomeJaCadastradoException;
-import com.alessandromelo.exception.dispositivo.DispositivoNaoEncontradoException;
 import com.alessandromelo.exception.global.EntidadeEmUsoException;
 import com.alessandromelo.exception.usuario.EmailJaCadastradoException;
 import com.alessandromelo.exception.usuario.MatriculaJaCadastradaException;
