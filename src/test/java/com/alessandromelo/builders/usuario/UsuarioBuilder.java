@@ -6,9 +6,9 @@ import com.alessandromelo.entity.Usuario;
 public class UsuarioBuilder {
 
     private Long id = 1L;
-    private String nome = "Jorge da Silva";
-    private String email = "jorginds69@gmail.com";
-    private String matricula = "7001";
+    private String nome = "Jorge da Silva"; //Obrigatorio
+    private String email = "jorginds69@gmail.com"; //Obrigatorio
+    private String matricula = "7001"; //Obrigatorio
     private String cargo = "Analista de RH";
     private Boolean ativo = true;
     private Departamento departamento;

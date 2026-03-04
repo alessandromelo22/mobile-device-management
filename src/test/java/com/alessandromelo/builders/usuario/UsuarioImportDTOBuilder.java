@@ -4,9 +4,9 @@ import com.alessandromelo.dto.usuario.UsuarioImportDTO;
 
 public class UsuarioImportDTOBuilder {
 
-    private String nome = "Jorge da Silva";
-    private String email = "jorginds69@gmail.com";
-    private String matricula = "7001";
+    private String nome = "Jorge da Silva"; //Obrigatorio
+    private String email = "jorginds69@gmail.com"; //Obrigatorio
+    private String matricula = "7001"; //Obrigatorio
     private String cargo = "Analista de RH";
     private String nomeDepartamento = "Recursos Humanos"; //(FK)
 

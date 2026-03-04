@@ -38,24 +38,24 @@ import static org.mockito.Mockito.*;
 class UsuarioServiceTest {
 
     @InjectMocks
-    UsuarioService usuarioService;
+    private UsuarioService usuarioService;
 
     @Mock
-    UsuarioRepository usuarioRepository;
+    private UsuarioRepository usuarioRepository;
     @Mock
-    UsuarioMapper usuarioMapper;
+    private UsuarioMapper usuarioMapper;
     @Mock
-    DepartamentoRepository departamentoRepository;
+    private DepartamentoRepository departamentoRepository;
     @Mock
-    DispositivoMapper dispositivoMapper;
+    private DispositivoMapper dispositivoMapper;
     @Mock
-    DispositivoRepository dispositivoRepository;
+    private DispositivoRepository dispositivoRepository;
     @Mock
-    UsuarioCsvImporter usuarioCsvImporter;
+    private UsuarioCsvImporter usuarioCsvImporter;
 
 
     @Captor
-    ArgumentCaptor<Usuario> usuarioCaptor;
+    private ArgumentCaptor<Usuario> usuarioCaptor;
 
 
 
@@ -156,6 +156,7 @@ class UsuarioServiceTest {
      *  <p>2-Deve lançar MatriculaJaCadastradaException </p>
      *  <p>3-Deve lançar DepartamentoNaoEncontrado </p>
      *  <p>4-Deve retornar UsuarioResponseDTO </p>
+     *  <p>5-Deve retornar UsuarioResponseDTO sem o objeto Departamento</p>
      *
      */
     @Test
@@ -241,7 +242,51 @@ class UsuarioServiceTest {
                 () -> Assertions.assertEquals(1L, capturado.getId()),
                 () -> Assertions.assertEquals("Jorge da Silva", capturado.getNome()),
                 () -> Assertions.assertEquals("jorginds69@gmail.com", capturado.getEmail()),
-                () -> Assertions.assertEquals("7001", capturado.getMatricula())
+                () -> Assertions.assertEquals("7001", capturado.getMatricula()),
+
+                () -> Assertions.assertEquals(1L, capturado.getDepartamento().getId()),
+                () -> Assertions.assertEquals("Recursos Humanos", capturado.getDepartamento().getNome()),
+                () -> Assertions.assertEquals("RH", capturado.getDepartamento().getSigla())
+
+        );
+
+        Assertions.assertNotNull(retorno);
+        Assertions.assertAll(
+                () -> Assertions.assertEquals(1L, retorno.getId()),
+                () -> Assertions.assertEquals("Jorge da Silva", retorno.getNome()),
+                () -> Assertions.assertEquals("jorginds69@gmail.com", retorno.getEmail()),
+                () -> Assertions.assertEquals("7001", retorno.getMatricula())
+        );
+    }
+
+    @Test
+    @DisplayName("cadastrarNovoUsuario() deve retornar UsuarioResponseDTO sem o objeto Departamento")
+    void cadastrarNovoUsuarioDeveRetornarUsuarioResponseDTOSemObjetoDepartamento(){
+        //Arrange
+        UsuarioRequestDTO requestDTO = new UsuarioRequestDTOBuilder().build();
+        Usuario usuario = new UsuarioBuilder().build();
+        UsuarioResponseDTO responseDTO = new UsuarioResponseDTOBuilder().build();
+
+
+        Mockito.when(this.usuarioRepository.existsByEmail(requestDTO.getEmail())).thenReturn(false);
+        Mockito.when(this.usuarioRepository.existsByMatricula(requestDTO.getMatricula())).thenReturn(false);
+        Mockito.when(this.usuarioMapper.toEntity(requestDTO)).thenReturn(usuario);
+        Mockito.when(this.usuarioRepository.save(usuario)).thenReturn(usuario);
+        Mockito.when(this.usuarioMapper.toResponseDTO(usuario)).thenReturn(responseDTO);
+
+        //Act
+        UsuarioResponseDTO retorno = this.usuarioService.cadastrarNovoUsuario(requestDTO);
+
+        //Asert
+        verify(this.usuarioRepository, times(1)).save(this.usuarioCaptor.capture());
+        Usuario capturado = this.usuarioCaptor.getValue();
+        Assertions.assertAll(
+                () -> Assertions.assertEquals(1L, capturado.getId()),
+                () -> Assertions.assertEquals("Jorge da Silva", capturado.getNome()),
+                () -> Assertions.assertEquals("jorginds69@gmail.com", capturado.getEmail()),
+                () -> Assertions.assertEquals("7001", capturado.getMatricula()),
+
+                () -> Assertions.assertNull(capturado.getDepartamento())
         );
 
         Assertions.assertNotNull(retorno);
@@ -262,6 +307,7 @@ class UsuarioServiceTest {
      *  <p>3-Deve lançar MatriculaJaCadastradaException </p>
      *  <p>4-Deve lançar DepartamentoNaoEncontrado </p>
      *  <p>5-Deve retornar UsuarioResponseDTO </p>
+     *  <p>6-Deve retornar UsuarioResponseDTO sem o objeto Departamento</p>
      *
      */
     @Test
@@ -395,7 +441,60 @@ class UsuarioServiceTest {
                 () -> Assertions.assertEquals(1L, capturado.getId()),
                 () -> Assertions.assertEquals("Henrique Jorge da Silva", capturado.getNome()),
                 () -> Assertions.assertEquals("henrjos77@gmail.com", capturado.getEmail()),
-                () -> Assertions.assertEquals("7007", capturado.getMatricula())
+                () -> Assertions.assertEquals("7007", capturado.getMatricula()),
+
+                () -> Assertions.assertEquals(1L, capturado.getDepartamento().getId()),
+                () -> Assertions.assertEquals("Recursos Humanos", capturado.getDepartamento().getNome()),
+                () -> Assertions.assertEquals("RH", capturado.getDepartamento().getSigla())
+        );
+
+        Assertions.assertNotNull(retorno);
+        Assertions.assertAll(
+                () -> Assertions.assertEquals(1L, retorno.getId()),
+                () -> Assertions.assertEquals("Henrique Jorge da Silva", retorno.getNome()),
+                () -> Assertions.assertEquals("henrjos77@gmail.com", retorno.getEmail()),
+                () -> Assertions.assertEquals("7007", retorno.getMatricula())
+        );
+    }
+
+    @Test
+    @DisplayName("atualizarUsuario() deve retornar UsuarioResponseDTO sem o objeto Departamento")
+    void atualizarUsuarioDeveRetornarUsuarioResponseDTOSemObjetoDepartamento(){
+        //Arrange
+        UsuarioRequestDTO requestDTO = new UsuarioRequestDTOBuilder()
+                .comNome("Henrique Jorge da Silva")
+                .comEmail("henrjos77@gmail.com")
+                .comMatricula("7007")
+                .build();
+        Usuario usuario = new UsuarioBuilder().build();
+        UsuarioResponseDTO responseDTO = new UsuarioResponseDTOBuilder()
+                .comNome("Henrique Jorge da Silva")
+                .comEmail("henrjos77@gmail.com")
+                .comMatricula("7007")
+                .build();
+
+        Mockito.when(this.usuarioRepository.findById(1L)).thenReturn(Optional.of(usuario));
+        Mockito.when(this.usuarioRepository.existsByEmailAndIdNot(requestDTO.getEmail(), 1L))
+                .thenReturn(false);
+        Mockito.when(this.usuarioRepository.existsByMatriculaAndIdNot(requestDTO.getMatricula(), 1L))
+                .thenReturn(false);
+
+        Mockito.when(this.usuarioRepository.save(usuario)).thenReturn(usuario);
+        Mockito.when(this.usuarioMapper.toResponseDTO(usuario)).thenReturn(responseDTO);
+
+        //Act
+        UsuarioResponseDTO retorno = this.usuarioService.atualizarUsuario(1L,requestDTO);
+
+        //Asert
+        verify(this.usuarioRepository, times(1)).save(this.usuarioCaptor.capture());
+        Usuario capturado = this.usuarioCaptor.getValue();
+        Assertions.assertAll(
+                () -> Assertions.assertEquals(1L, capturado.getId()),
+                () -> Assertions.assertEquals("Henrique Jorge da Silva", capturado.getNome()),
+                () -> Assertions.assertEquals("henrjos77@gmail.com", capturado.getEmail()),
+                () -> Assertions.assertEquals("7007", capturado.getMatricula()),
+
+                () -> Assertions.assertNull(capturado.getDepartamento())
         );
 
         Assertions.assertNotNull(retorno);
@@ -409,7 +508,7 @@ class UsuarioServiceTest {
 
 
 
-    /**<p><b>removerUsuario():</b></p>
+    /**<p><b>removerUsuarioPorId():</b></p>
      *
      *  <p>1-Deve lançar UsuarioNaoEncontradoException </p>
      *  <p>2-Deve lançar EntidadeEmUsoException </p>
@@ -596,6 +695,10 @@ class UsuarioServiceTest {
         Usuario capturado = this.usuarioCaptor.getValue();
 
         Assertions.assertAll(
+                () -> Assertions.assertEquals(1L, capturado.getId()),
+                () -> Assertions.assertEquals("Jorge da Silva", capturado.getNome()),
+                () -> Assertions.assertEquals("7001", capturado.getMatricula()),
+
                 () -> Assertions.assertEquals(1L, capturado.getDepartamento().getId()),
                 () -> Assertions.assertEquals("Recursos Humanos", capturado.getDepartamento().getNome())
         );
