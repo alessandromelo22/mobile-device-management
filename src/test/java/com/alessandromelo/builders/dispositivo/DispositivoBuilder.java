@@ -10,7 +10,6 @@ import java.time.Month;
 
 public class DispositivoBuilder {
 
-
     private Long id = 1L;
     private String modelo = "Aspire 5"; //Obrigatorio
     private String marca = "Acer"; //Obrigatorio

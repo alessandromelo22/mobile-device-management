@@ -5,8 +5,8 @@ import com.alessandromelo.dto.usuario.UsuarioResumoResponseDTO;
 public class UsuarioResumoResponseDTOBuilder {
 
     private Long id = 1L;
-    private String nome = "Jorge da Silva";
-    private String matricula = "7001";
+    private String nome = "Jorge da Silva"; //Obrigatorio
+    private String matricula = "7001"; //Obrigatorio
 
     public UsuarioResumoResponseDTOBuilder comId(Long id){
         this.id = id;

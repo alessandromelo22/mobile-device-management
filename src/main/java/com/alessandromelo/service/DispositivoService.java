@@ -138,11 +138,11 @@ public class DispositivoService {
     //Setar Dispositivo a um Usuario:
     public DispositivoUsuarioResponseDTO vincularDispositivoAoUsuario(Long dispositivoId, Long usuarioId){
 
-        Usuario usuario = this.usuarioRepository.findById(usuarioId)
-                .orElseThrow(()-> new UsuarioNaoEncontradoException(usuarioId));
-
         Dispositivo dispositivo = this.dispositivoRepository.findById(dispositivoId)
                 .orElseThrow(() -> new DispositivoNaoEncontradoException(dispositivoId));
+
+        Usuario usuario = this.usuarioRepository.findById(usuarioId)
+                .orElseThrow(()-> new UsuarioNaoEncontradoException(usuarioId));
 
         dispositivo.setUsuario(usuario);
 
