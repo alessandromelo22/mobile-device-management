@@ -65,11 +65,25 @@ class DispositivoServiceTest {
 
 
 
-    /**<p><b>listarDispositivos():</b></p>
+    /**<p><b>listarTodosDispositivos():</b></p>
      *
-     *  <p>1- Deve retornar uma lista de DispositivoResponseDTO</p>
-     *  <p>2- Deve retornar uma lista vazia</p>
+     *  <p>1- Deve retornar uma lista vazia</p>
+     *  <p>2- Deve retornar uma lista de DispositivoResponseDTO</p>
      */
+    @Test
+    @DisplayName("listarTodosDispositivos() deve retornar uma lista vazia")
+    void listarTodosDispositivosDeveRetornarListaVazia() {
+        //Arrange:
+        when(this.dispositivoRepository.findAll()).thenReturn(List.of());
+
+        //Act:
+        List<DispositivoResponseDTO> retorno = this.dispositivoService.listarTodosDispositivos();
+
+        //Assert:
+        Assertions.assertNotNull(retorno);
+        Assertions.assertTrue(retorno.isEmpty());
+    }
+
     @Test
     @DisplayName("listarTodosDispositivos() deve retornar uma lista de DispositivoResponseDTO")
     void listarTodosDispositivosDeveRetornarListaDeDispositivoResponseDTO() {
@@ -94,20 +108,6 @@ class DispositivoServiceTest {
                 () -> Assertions.assertEquals("6977a67dey0",retorno.get(0).getNumeroSerie())
         );
         verify(this.dispositivoMapper, times(1)).toResponseDTO(dispositivo);
-    }
-
-    @Test
-    @DisplayName("listarTodosDispositivos() deve retornar uma lista vazia")
-    void listarTodosDispositivosDeveRetornarListaVazia() {
-        //Arrange:
-        when(this.dispositivoRepository.findAll()).thenReturn(List.of());
-
-        //Act:
-        List<DispositivoResponseDTO> retorno = this.dispositivoService.listarTodosDispositivos();
-
-        //Assert:
-        Assertions.assertNotNull(retorno);
-        Assertions.assertTrue(retorno.isEmpty());
     }
 
 
@@ -158,8 +158,8 @@ class DispositivoServiceTest {
 
     /**<p><b>buscarDispositivosPorStatus():</b></p>
      *
-     *  <p>1- Deve retoranar lista vazia</p>
-     *  <p>2- Deve retornar um DispositivoResponseDTO</p>
+     *  <p>1- Deve retornar lista vazia</p>
+     *  <p>2- Deve retornar uma lista de DispositivoResponseDTO</p>
      */
     @Test
     @DisplayName("buscarDispositivosPorStatus() deve retornar lista vazia")
@@ -208,7 +208,7 @@ class DispositivoServiceTest {
      *  <p>1-Deve lançar NumeroDeSerieJaCadastradoException </p>
      *  <p>2-Deve lançar UsuarioNaoEncontradoException </p>
      *  <p>3-Deve retornar DispositivoResponseDTO </p>
-     *  <p>4-Deve retornar DispositivoResponseDTO </p>
+     *  <p>4-Deve retornar DispositivoResponseDTO sem o objeto Usuario</p>
      */
     @Test
     @DisplayName("cadastrarNovoDispositivo() deve lançar NumeroDeSerieJaCadastradoException")
@@ -216,14 +216,14 @@ class DispositivoServiceTest {
         //Arrange
         DispositivoRequestDTO requestDTO = new DispositivoRequestDTOBuilder().build();
 
-        Mockito.when(this.dispositivoRepository.existsByNumeroSerie(requestDTO.getNumeroSerie())).thenReturn(true);
+        when(this.dispositivoRepository.existsByNumeroSerie(requestDTO.getNumeroSerie())).thenReturn(true);
 
         //Act
         //Asert
         Assertions.assertThrows(NumeroDeSerieJaCadastradoException.class,
                 () -> dispositivoService.cadastrarNovoDispositivo(requestDTO));
 
-        Mockito.verify(this.dispositivoRepository,Mockito.never()).save(any());
+        verify(this.dispositivoRepository,Mockito.never()).save(any());
     }
 
     @Test
@@ -233,16 +233,16 @@ class DispositivoServiceTest {
         DispositivoRequestDTO requestDTO = new DispositivoRequestDTOBuilder().comUsuarioId(1L).build();
         Dispositivo dispositivo = new DispositivoBuilder().build();
 
-        Mockito.when(this.dispositivoRepository.existsByNumeroSerie(requestDTO.getNumeroSerie())).thenReturn(false);
-        Mockito.when(this.dispositivoMapper.toEntity(requestDTO)).thenReturn(dispositivo);
-        Mockito.when(this.usuarioRepository.findById(1L)).thenReturn(Optional.empty());
+        when(this.dispositivoRepository.existsByNumeroSerie(requestDTO.getNumeroSerie())).thenReturn(false);
+        when(this.dispositivoMapper.toEntity(requestDTO)).thenReturn(dispositivo);
+        when(this.usuarioRepository.findById(1L)).thenReturn(Optional.empty());
 
         //Act
         //Asert
         Assertions.assertThrows(UsuarioNaoEncontradoException.class,
                 () -> dispositivoService.cadastrarNovoDispositivo(requestDTO));
 
-        Mockito.verify(this.dispositivoRepository,Mockito.never()).save(any());
+        verify(this.dispositivoRepository,Mockito.never()).save(any());
     }
 
     @Test
@@ -256,11 +256,11 @@ class DispositivoServiceTest {
         DispositivoResponseDTO responseDTO = new DispositivoResponseDTOBuilder().build();
 
 
-        Mockito.when(this.dispositivoRepository.existsByNumeroSerie(requestDTO.getNumeroSerie())).thenReturn(false);
-        Mockito.when(this.dispositivoMapper.toEntity(requestDTO)).thenReturn(dispositivo);
-        Mockito.when(this.usuarioRepository.findById(1L)).thenReturn(Optional.of(usuario));
-        Mockito.when(this.dispositivoRepository.save(dispositivo)).thenReturn(dispositivo);
-        Mockito.when(this.dispositivoMapper.toResponseDTO(dispositivo)).thenReturn(responseDTO);
+        when(this.dispositivoRepository.existsByNumeroSerie(requestDTO.getNumeroSerie())).thenReturn(false);
+        when(this.dispositivoMapper.toEntity(requestDTO)).thenReturn(dispositivo);
+        when(this.usuarioRepository.findById(1L)).thenReturn(Optional.of(usuario));
+        when(this.dispositivoRepository.save(dispositivo)).thenReturn(dispositivo);
+        when(this.dispositivoMapper.toResponseDTO(dispositivo)).thenReturn(responseDTO);
 
         //Act
         DispositivoResponseDTO retorno = this.dispositivoService.cadastrarNovoDispositivo(requestDTO);
@@ -302,10 +302,10 @@ class DispositivoServiceTest {
         DispositivoResponseDTO responseDTO = new DispositivoResponseDTOBuilder().build();
 
 
-        Mockito.when(this.dispositivoRepository.existsByNumeroSerie(requestDTO.getNumeroSerie())).thenReturn(false);
-        Mockito.when(this.dispositivoMapper.toEntity(requestDTO)).thenReturn(dispositivo);
-        Mockito.when(this.dispositivoRepository.save(dispositivo)).thenReturn(dispositivo);
-        Mockito.when(this.dispositivoMapper.toResponseDTO(dispositivo)).thenReturn(responseDTO);
+        when(this.dispositivoRepository.existsByNumeroSerie(requestDTO.getNumeroSerie())).thenReturn(false);
+        when(this.dispositivoMapper.toEntity(requestDTO)).thenReturn(dispositivo);
+        when(this.dispositivoRepository.save(dispositivo)).thenReturn(dispositivo);
+        when(this.dispositivoMapper.toResponseDTO(dispositivo)).thenReturn(responseDTO);
 
         //Act
         DispositivoResponseDTO retorno = this.dispositivoService.cadastrarNovoDispositivo(requestDTO);

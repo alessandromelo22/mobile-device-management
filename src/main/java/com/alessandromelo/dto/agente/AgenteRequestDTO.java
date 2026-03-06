@@ -7,7 +7,6 @@ public class AgenteRequestDTO {
 
     @NotBlank(message = "A versão do Agente deve ser informada!")
     private String versao;
-    private String log;
     private Long dispositivoId; // FK
 
 
@@ -15,9 +14,8 @@ public class AgenteRequestDTO {
     public AgenteRequestDTO() {
     }
 
-    public AgenteRequestDTO(String versao, String log, Long dispositivoId) {
+    public AgenteRequestDTO(String versao, Long dispositivoId) {
         this.versao = versao;
-        this.log = log;
         this.dispositivoId = dispositivoId;
     }
 
@@ -28,14 +26,6 @@ public class AgenteRequestDTO {
 
     public void setVersao(String versao) {
         this.versao = versao;
-    }
-
-    public String getLog() {
-        return log;
-    }
-
-    public void setLog(String log) {
-        this.log = log;
     }
 
     public Long getDispositivoId() {

@@ -14,6 +14,7 @@ import com.alessandromelo.repository.AgenteRepository;
 import com.alessandromelo.repository.DispositivoRepository;
 import org.springframework.stereotype.Service;
 
+import java.time.Clock;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -29,12 +30,14 @@ public class AgenteService {
     private AgenteMapper agenteMapper;
 
     private DispositivoRepository dispositivoRepository;
+    private Clock clock;
 
 
-    public AgenteService(AgenteRepository agenteRepository, AgenteMapper agenteMapper, DispositivoRepository dispositivoRepository) {
+    public AgenteService(AgenteRepository agenteRepository, AgenteMapper agenteMapper, DispositivoRepository dispositivoRepository, Clock clock) {
         this.agenteRepository = agenteRepository;
         this.agenteMapper = agenteMapper;
         this.dispositivoRepository = dispositivoRepository;
+        this.clock = clock;
     }
 
     //Buscar todos
@@ -55,7 +58,6 @@ public class AgenteService {
 
 
 //Buscar por status
-
     public List<AgenteResponseDTO> buscarAgentesPorStatus(AgenteStatus status){
 
         List<Agente> agentes = this.agenteRepository.findByStatus(status);
@@ -68,7 +70,7 @@ public class AgenteService {
 
         Agente agente = this.agenteMapper.toEntity(novoAgenteDTO);
         agente.setStatus(AgenteStatus.ATIVO);
-        agente.setDataUltimaAtividade(LocalDateTime.now());
+        agente.setDataUltimaAtividade(LocalDateTime.now(this.clock));
 
         if(novoAgenteDTO.getDispositivoId() != null){
 
@@ -87,8 +89,7 @@ public class AgenteService {
                 .map(agente -> {
 
                     agente.setVersao(agenteAtualizadoDTO.getVersao());
-                    agente.setLog(agenteAtualizadoDTO.getLog());
-                    agente.setDataUltimaAtividade(LocalDateTime.now()); //setta a data e hora atual da chamada
+                    agente.setDataUltimaAtividade(LocalDateTime.now(this.clock)); //setta a data e hora atual da chamada
 
                     if(agenteAtualizadoDTO.getDispositivoId() != null){
 
@@ -110,7 +111,7 @@ public class AgenteService {
                 .map(agente -> {
 
                     agente.setStatus(AgenteStatus.INATIVO);
-                    agente.setDataUltimaAtividade(LocalDateTime.now()); //setta a data e hora atual da chamada desse endpoint
+                    agente.setDataUltimaAtividade(LocalDateTime.now(this.clock)); //setta a data e hora atual da chamada desse endpoint
 
                     return this.agenteMapper.toResumoResponseDTO(this.agenteRepository.save(agente));
 
@@ -126,7 +127,7 @@ public class AgenteService {
                 .map(agente -> {
 
                     agente.setStatus(AgenteStatus.ATIVO);
-                    agente.setDataUltimaAtividade(LocalDateTime.now()); //setta a data e hora atual da chamada desse endpoint
+                    agente.setDataUltimaAtividade(LocalDateTime.now(this.clock)); //setta a data e hora atual da chamada desse endpoint
 
                     return this.agenteMapper.toResumoResponseDTO(this.agenteRepository.save(agente));
 
