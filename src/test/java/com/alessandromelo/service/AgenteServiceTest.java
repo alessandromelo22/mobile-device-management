@@ -3,9 +3,11 @@ package com.alessandromelo.service;
 import com.alessandromelo.builders.agente.AgenteBuilder;
 import com.alessandromelo.builders.agente.AgenteRequestDTOBuilder;
 import com.alessandromelo.builders.agente.AgenteResponseDTOBuilder;
+import com.alessandromelo.builders.agente.AgenteResumoResponseDTOBuilder;
 import com.alessandromelo.builders.dispositivo.DispositivoBuilder;
 import com.alessandromelo.dto.agente.AgenteRequestDTO;
 import com.alessandromelo.dto.agente.AgenteResponseDTO;
+import com.alessandromelo.dto.agente.AgenteResumoResponseDTO;
 import com.alessandromelo.entity.Agente;
 import com.alessandromelo.entity.Dispositivo;
 import com.alessandromelo.enums.AgenteStatus;
@@ -304,8 +306,243 @@ class AgenteServiceTest {
      *
      *  <p>1-Deve lançar AgenteNaoEncontradoException </p>
      *  <p>2-Deve lançar DispositivoNaoEncontradoException </p>
-     *  <p>5-Deve retornar AgenteResponseDTO </p>
-     *  <p>6-Deve retornar AgenteResponseDTO sem o objeto Dispositivo</p>
-     *
+     *  <p>3-Deve retornar AgenteResponseDTO </p>
+     *  <p>4-Deve retornar AgenteResponseDTO sem o objeto Dispositivo</p>
      */
+    @Test
+    @DisplayName("atualizarAgente() deve lançar AgenteNaoEncontradoException")
+    void atualizarAgenteDeveLancarAgenteNaoEncontradoException(){
+        //Arrange
+        AgenteRequestDTO requestDTO = new AgenteRequestDTOBuilder()
+                .comVersao("BETA V2.2.2").build();
+
+        when(this.agenteRepository.findById(1L)).thenReturn(Optional.empty());
+
+        //Act
+        //Assert
+        Assertions.assertThrows(AgenteNaoEncontradoException.class,
+                () -> this.agenteService.atualizarAgente(1L,requestDTO));
+
+        verify(this.agenteRepository, never()).save(any());
+    }
+
+    @Test
+    @DisplayName("atualizarAgente() deve lançar DispositivoNaoEncontradoException")
+    void atualizarAgenteDeveLancarDispositivoNaoEncontradoException(){
+        //Arrange
+        AgenteRequestDTO requestDTO = new AgenteRequestDTOBuilder()
+                .comVersao("BETA V2.2.2")
+                .comDispositivoId(1L).build();
+
+        Agente agente = new AgenteBuilder().build();
+
+        when(this.agenteRepository.findById(1L)).thenReturn(Optional.of(agente));
+        when(this.dispositivoRepository.findById(1L)).thenReturn(Optional.empty());
+
+        //Act
+        //Assert
+        Assertions.assertThrows(DispositivoNaoEncontradoException.class,
+                () -> this.agenteService.atualizarAgente(1L,requestDTO));
+
+        verify(this.agenteRepository, never()).save(any());
+    }
+
+    @Test
+    @DisplayName("atualizarAgente() deve retornar AgenteResponseDTO")
+    void atualizarAgenteDeveRetornarAgenteResponseDTO(){
+        //Arrange
+        AgenteRequestDTO requestDTO = new AgenteRequestDTOBuilder()
+                .comVersao("BETA V2.2.2")
+                .comDispositivoId(1L).build();
+
+        Agente agente = new AgenteBuilder().build();
+        Dispositivo dispositivo = new DispositivoBuilder().build();
+        AgenteResponseDTO responseDTO = new AgenteResponseDTOBuilder()
+                .comVersao("BETA V2.2.2")
+                .comDataUltimaAtividade(DATA_FIXA).build();
+
+        when(this.agenteRepository.findById(1L)).thenReturn(Optional.of(agente));
+        when(this.dispositivoRepository.findById(1L)).thenReturn(Optional.of(dispositivo));
+        when(this.agenteRepository.save(agente)).thenReturn(agente);
+        when(this.agenteMapper.toResponseDTO(agente)).thenReturn(responseDTO);
+
+        //Act
+        AgenteResponseDTO retorno = this.agenteService.atualizarAgente(1L, requestDTO);
+
+        //Assert
+        Assertions.assertNotNull(retorno);
+
+        verify(this.agenteRepository).save(this.agenteCaptor.capture());
+        Agente capturado = this.agenteCaptor.getValue();
+        Assertions.assertAll(
+                () -> Assertions.assertEquals(1L, capturado.getId()),
+                () -> Assertions.assertEquals("BETA V2.2.2", capturado.getVersao()),
+                () -> Assertions.assertEquals(AgenteStatus.ATIVO, capturado.getStatus()),
+                () -> Assertions.assertEquals(DATA_FIXA, capturado.getDataUltimaAtividade()),
+
+                () -> Assertions.assertEquals(1L, capturado.getDispositivo().getId()),
+                () -> Assertions.assertEquals("Aspire 5", capturado.getDispositivo().getModelo()),
+                () -> Assertions.assertEquals("Acer", capturado.getDispositivo().getMarca()),
+                () -> Assertions.assertEquals("6977a67dey0", capturado.getDispositivo().getNumeroSerie())
+        );
+
+        Assertions.assertAll(
+                () -> Assertions.assertEquals(1L, retorno.getId()),
+                () -> Assertions.assertEquals("BETA V2.2.2", requestDTO.getVersao()),
+                () -> Assertions.assertEquals(AgenteStatus.ATIVO, retorno.getStatus()),
+                () -> Assertions.assertEquals(DATA_FIXA, retorno.getDataUltimaAtividade())
+        );
+    }
+
+    @Test
+    @DisplayName("atualizarAgente() deve retornar AgenteResponseDTO sem objeto Dispositivo")
+    void atualizarAgenteDeveRetornarAgenteResponseDTOSemObjetoDispositivo() {
+        //Arrange
+        AgenteRequestDTO requestDTO = new AgenteRequestDTOBuilder()
+                .comVersao("BETA V2.2.2").build();
+
+        Agente agente = new AgenteBuilder().build();
+        AgenteResponseDTO responseDTO = new AgenteResponseDTOBuilder()
+                .comVersao("BETA V2.2.2")
+                .comDataUltimaAtividade(DATA_FIXA).build();
+
+        when(this.agenteRepository.findById(1L)).thenReturn(Optional.of(agente));
+        when(this.agenteRepository.save(agente)).thenReturn(agente);
+        when(this.agenteMapper.toResponseDTO(agente)).thenReturn(responseDTO);
+
+        //Act
+        AgenteResponseDTO retorno = this.agenteService.atualizarAgente(1L, requestDTO);
+
+        //Assert
+        Assertions.assertNotNull(retorno);
+
+        verify(this.agenteRepository).save(this.agenteCaptor.capture());
+        Agente capturado = this.agenteCaptor.getValue();
+        Assertions.assertAll(
+                () -> Assertions.assertEquals(1L, capturado.getId()),
+                () -> Assertions.assertEquals("BETA V2.2.2", capturado.getVersao()),
+                () -> Assertions.assertEquals(AgenteStatus.ATIVO, capturado.getStatus()),
+                () -> Assertions.assertEquals(DATA_FIXA, capturado.getDataUltimaAtividade()),
+
+                () -> Assertions.assertNull(capturado.getDispositivo())
+        );
+
+        Assertions.assertAll(
+                () -> Assertions.assertEquals(1L, retorno.getId()),
+                () -> Assertions.assertEquals("BETA V2.2.2", requestDTO.getVersao()),
+                () -> Assertions.assertEquals(AgenteStatus.ATIVO, retorno.getStatus()),
+                () -> Assertions.assertEquals(DATA_FIXA, retorno.getDataUltimaAtividade())
+        );
+    }
+
+
+
+    /**<p><b>desativarAgente():</b></p>
+     *
+     *  <p>1-Deve lançar AgenteNaoEncontradoException </p>
+     *  <p>2-Deve retornar AgenteResponseDTO </p>
+     */
+    @Test
+    @DisplayName("desativarAgente() deve lançar AgenteNaoEncontradoException")
+    void desativarAgenteDeveLancarAgenteNaoEncontradoException(){
+        //Arrange
+        when(this.agenteRepository.findById(1L)).thenReturn(Optional.empty());
+
+        //Act
+        //Assert
+        Assertions.assertThrows(AgenteNaoEncontradoException.class,
+                () -> this.agenteService.desativarAgente(1L));
+
+        verify(this.agenteRepository, never()).save(any());
+    }
+
+    @Test
+    @DisplayName("desativarAgente() deve retornar AgenteResponseDTO")
+    void desativarAgenteDeveRetornarAgenteResponseDTO(){
+        //Arrange
+        Agente agente = new AgenteBuilder().build();
+        AgenteResumoResponseDTO responseDTO = new AgenteResumoResponseDTOBuilder()
+                .comStatus(AgenteStatus.INATIVO)
+                .comDataUltimaAtividade(DATA_FIXA).build();
+
+        when(this.agenteRepository.findById(1L)).thenReturn(Optional.of(agente));
+        when(this.agenteRepository.save(agente)).thenReturn(agente);
+        when(this.agenteMapper.toResumoResponseDTO(agente)).thenReturn(responseDTO);
+
+        //Act
+        AgenteResumoResponseDTO retorno = this.agenteService.desativarAgente(1L);
+
+        //Assert
+        Assertions.assertNotNull(retorno);
+
+        verify(this.agenteRepository).save(this.agenteCaptor.capture());
+        Agente capturado = this.agenteCaptor.getValue();
+        Assertions.assertAll(
+                () -> Assertions.assertEquals(1L, capturado.getId()),
+                () -> Assertions.assertEquals("BETA V1.0.1", capturado.getVersao()),
+                () -> Assertions.assertEquals(AgenteStatus.INATIVO, capturado.getStatus()),
+                () -> Assertions.assertEquals(DATA_FIXA, capturado.getDataUltimaAtividade())
+        );
+
+        Assertions.assertAll(
+                () -> Assertions.assertEquals(1L, retorno.getId()),
+                () -> Assertions.assertEquals(AgenteStatus.INATIVO, retorno.getStatus()),
+                () -> Assertions.assertEquals(DATA_FIXA, retorno.getDataUltimaAtividade())
+        );
+    }
+
+
+
+    /**<p><b>ativarAgente():</b></p>
+     *
+     *  <p>1-Deve lançar AgenteNaoEncontradoException </p>
+     *  <p>2-Deve retornar AgenteResponseDTO </p>
+     */
+    @Test
+    @DisplayName("ativarAgente() deve lançar AgenteNaoEncontradoException")
+    void ativarAgenteDeveLancarAgenteNaoEncontradoException(){
+        //Arrange
+        when(this.agenteRepository.findById(1L)).thenReturn(Optional.empty());
+
+        //Act
+        //Assert
+        Assertions.assertThrows(AgenteNaoEncontradoException.class,
+                () -> this.agenteService.ativarAgente(1L));
+
+        verify(this.agenteRepository, never()).save(any());
+    }
+
+    @Test
+    @DisplayName("ativarAgente() deve retornar AgenteResponseDTO")
+    void ativarAgenteDeveRetornarAgenteResponseDTO(){
+        //Arrange
+        Agente agente = new AgenteBuilder().build();
+        AgenteResumoResponseDTO responseDTO = new AgenteResumoResponseDTOBuilder()
+                .comDataUltimaAtividade(DATA_FIXA).build();
+
+        when(this.agenteRepository.findById(1L)).thenReturn(Optional.of(agente));
+        when(this.agenteRepository.save(agente)).thenReturn(agente);
+        when(this.agenteMapper.toResumoResponseDTO(agente)).thenReturn(responseDTO);
+
+        //Act
+        AgenteResumoResponseDTO retorno = this.agenteService.ativarAgente(1L);
+
+        //Assert
+        Assertions.assertNotNull(retorno);
+
+        verify(this.agenteRepository).save(this.agenteCaptor.capture());
+        Agente capturado = this.agenteCaptor.getValue();
+        Assertions.assertAll(
+                () -> Assertions.assertEquals(1L, capturado.getId()),
+                () -> Assertions.assertEquals("BETA V1.0.1", capturado.getVersao()),
+                () -> Assertions.assertEquals(AgenteStatus.ATIVO, capturado.getStatus()),
+                () -> Assertions.assertEquals(DATA_FIXA, capturado.getDataUltimaAtividade())
+        );
+
+        Assertions.assertAll(
+                () -> Assertions.assertEquals(1L, retorno.getId()),
+                () -> Assertions.assertEquals(AgenteStatus.ATIVO, retorno.getStatus()),
+                () -> Assertions.assertEquals(DATA_FIXA, retorno.getDataUltimaAtividade())
+        );
+    }
 }
