@@ -7,22 +7,19 @@ import java.time.LocalDateTime;
 
 public class AgenteResponseDTO {
 
-
     private Long id;
     private String versao;
     private AgenteStatus status;
-    private String log;
     private LocalDateTime dataUltimaAtividade;
     private DispositivoResumoResponseDTO dispositivoResumoResponseDTO; // FK
 
     public AgenteResponseDTO() {
     }
 
-    public AgenteResponseDTO(Long id, String versao, AgenteStatus status, String log, LocalDateTime dataUltimaAtividade, DispositivoResumoResponseDTO dispositivoResumoResponseDTO) {
+    public AgenteResponseDTO(Long id, String versao, AgenteStatus status, LocalDateTime dataUltimaAtividade, DispositivoResumoResponseDTO dispositivoResumoResponseDTO) {
         this.id = id;
         this.versao = versao;
         this.status = status;
-        this.log = log;
         this.dataUltimaAtividade = dataUltimaAtividade;
         this.dispositivoResumoResponseDTO = dispositivoResumoResponseDTO;
     }
@@ -49,14 +46,6 @@ public class AgenteResponseDTO {
 
     public void setStatus(AgenteStatus status) {
         this.status = status;
-    }
-
-    public String getLog() {
-        return log;
-    }
-
-    public void setLog(String log) {
-        this.log = log;
     }
 
     public LocalDateTime getDataUltimaAtividade() {

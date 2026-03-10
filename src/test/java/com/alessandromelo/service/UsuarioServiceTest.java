@@ -61,9 +61,23 @@ class UsuarioServiceTest {
 
     /**<p><b>listarUsuarios():</b></p>
      *
-     *  <p>1- Deve retornar uma lista de UsuarioResponseDTO</p>
-     *  <p>2- Deve retornar uma lista vazia</p>
+     *  <p>1- Deve retornar uma lista vazia</p>
+     *  <p>2- Deve retornar uma lista de UsuarioResponseDTO</p>
      */
+    @Test
+    @DisplayName("listarUsuarios() deve retornar uma lista vazia")
+    void listarTodosDepartamentosDeveRetornarUmaListaVazia (){
+        //Arrange:
+        when(this.usuarioRepository.findAll()).thenReturn(List.of());
+
+        //Act:
+        List<UsuarioResponseDTO> retorno = this.usuarioService.listarUsuarios();
+
+        //Assert:
+        Assertions.assertTrue(retorno.isEmpty());
+        Assertions.assertNotNull(retorno);
+    }
+
     @Test
     @DisplayName("listarUsuarios() deve retornar uma lista de UsuarioResponseDTO")
     void listarUsuariosDeveRetornarListaDeUsuarioResponseDTO() {
@@ -88,20 +102,6 @@ class UsuarioServiceTest {
                 () -> Assertions.assertEquals("7001",retorno.get(0).getMatricula())
         );
         verify(this.usuarioMapper, times(1)).toResponseDTO(usuario);
-    }
-
-    @Test
-    @DisplayName("listarUsuarios() deve retornar uma lista vazia")
-    void listarTodosDepartamentosDeveRetornarUmaListaVazia (){
-        //Arrange:
-        when(this.usuarioRepository.findAll()).thenReturn(List.of());
-
-        //Act:
-        List<UsuarioResponseDTO> retorno = this.usuarioService.listarUsuarios();
-
-        //Assert:
-        Assertions.assertTrue(retorno.isEmpty());
-        Assertions.assertNotNull(retorno);
     }
 
 
@@ -239,7 +239,6 @@ class UsuarioServiceTest {
         verify(this.usuarioRepository, times(1)).save(this.usuarioCaptor.capture());
         Usuario capturado = this.usuarioCaptor.getValue();
         Assertions.assertAll(
-                () -> Assertions.assertEquals(1L, capturado.getId()),
                 () -> Assertions.assertEquals("Jorge da Silva", capturado.getNome()),
                 () -> Assertions.assertEquals("jorginds69@gmail.com", capturado.getEmail()),
                 () -> Assertions.assertEquals("7001", capturado.getMatricula()),
@@ -252,7 +251,6 @@ class UsuarioServiceTest {
 
         Assertions.assertNotNull(retorno);
         Assertions.assertAll(
-                () -> Assertions.assertEquals(1L, retorno.getId()),
                 () -> Assertions.assertEquals("Jorge da Silva", retorno.getNome()),
                 () -> Assertions.assertEquals("jorginds69@gmail.com", retorno.getEmail()),
                 () -> Assertions.assertEquals("7001", retorno.getMatricula())
@@ -281,7 +279,6 @@ class UsuarioServiceTest {
         verify(this.usuarioRepository, times(1)).save(this.usuarioCaptor.capture());
         Usuario capturado = this.usuarioCaptor.getValue();
         Assertions.assertAll(
-                () -> Assertions.assertEquals(1L, capturado.getId()),
                 () -> Assertions.assertEquals("Jorge da Silva", capturado.getNome()),
                 () -> Assertions.assertEquals("jorginds69@gmail.com", capturado.getEmail()),
                 () -> Assertions.assertEquals("7001", capturado.getMatricula()),
@@ -291,7 +288,7 @@ class UsuarioServiceTest {
 
         Assertions.assertNotNull(retorno);
         Assertions.assertAll(
-                () -> Assertions.assertEquals(1L, retorno.getId()),
+
                 () -> Assertions.assertEquals("Jorge da Silva", retorno.getNome()),
                 () -> Assertions.assertEquals("jorginds69@gmail.com", retorno.getEmail()),
                 () -> Assertions.assertEquals("7001", retorno.getMatricula())

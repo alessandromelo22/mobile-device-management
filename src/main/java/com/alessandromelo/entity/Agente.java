@@ -13,7 +13,6 @@ import java.util.List;
  * <p>{@code id} -> Id do Agente</p>
  * <p>{@code versao} -> Versão que o Agente se encontra</p>
  * <p>{@code status} -> Representa seu estado podendo receber os valores (ATIVO, INATIVO, EM_EXECUCAO)</p>
- * <p>{@code log} -> Logs de exução</p>
  * <p>{@code dataUltimaAtividade} ->Registra a data da ultima operação de escrita ou evento ativo</p>
  * <p>{@code dispositivo} -> FK que faz referência a entidade {@link Dispositivo}</p>
  *
@@ -28,7 +27,6 @@ public class Agente {
     private String versao;
     @Enumerated(EnumType.STRING)
     private AgenteStatus status; // enum (ATIVO, INATIVO, EM_EXECUCAO)
-    private String log; // Log de execução do agente
     private LocalDateTime dataUltimaAtividade;
 
     @OneToOne
@@ -46,11 +44,10 @@ public class Agente {
     public Agente() {
     }
 
-    public Agente(Long id, String versao, AgenteStatus status, String log, LocalDateTime dataUltimaAtividade, Dispositivo dispositivo, List<Comando> comandos, List<MetricasDispositivo> metricasDispositivos) {
+    public Agente(Long id, String versao, AgenteStatus status, LocalDateTime dataUltimaAtividade, Dispositivo dispositivo, List<Comando> comandos, List<MetricasDispositivo> metricasDispositivos) {
         this.id = id;
         this.versao = versao;
         this.status = status;
-        this.log = log;
         this.dataUltimaAtividade = dataUltimaAtividade;
         this.dispositivo = dispositivo;
         this.comandos = comandos;
@@ -79,14 +76,6 @@ public class Agente {
 
     public void setStatus(AgenteStatus status) {
         this.status = status;
-    }
-
-    public String getLog() {
-        return log;
-    }
-
-    public void setLog(String log) {
-        this.log = log;
     }
 
     public LocalDateTime getDataUltimaAtividade() {

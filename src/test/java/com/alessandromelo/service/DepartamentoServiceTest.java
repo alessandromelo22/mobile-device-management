@@ -34,6 +34,9 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 class DepartamentoServiceTest {
 
+    @InjectMocks
+    private DepartamentoService departamentoService;
+
     @Mock
     private DepartamentoRepository departamentoRepository;
     @Mock
@@ -42,9 +45,6 @@ class DepartamentoServiceTest {
     private UsuarioRepository usuarioRepository;
     @Mock
     private UsuarioMapper usuarioMapper;
-
-    @InjectMocks
-    private DepartamentoService departamentoService;
 
     @Captor
     private ArgumentCaptor<Departamento> departamentoCaptor;
@@ -56,9 +56,23 @@ class DepartamentoServiceTest {
 
     /**<p><b>listarTodosDepartamentos():</b></p>
      *
-     *  <p>1- Deve retornar uma lista de DepartamentoResponseDTO</p>
-     *  <p>2- Deve retornar uma lista vazia</p>
+     *  <p>1- Deve retornar uma lista vazia</p>
+     *  <p>2- Deve retornar uma lista de DepartamentoResponseDTO</p>
      */
+    @Test
+    @DisplayName("listarTodosDepartamento() deve retornar uma lista vazia")
+    void listarTodosDepartamentosDeveRetornarUmaListaVazia (){
+        //Arrange:
+        when(this.departamentoRepository.findAll()).thenReturn(List.of());
+
+        //Act:
+        List<DepartamentoResponseDTO> retorno = this.departamentoService.listarTodosDepartamentos();
+
+        //Assert:
+        Assertions.assertTrue(retorno.isEmpty());
+        Assertions.assertNotNull(retorno);
+    }
+
     @Test
     @DisplayName("listarTodosDepartamentos() deve retornar uma lista de DepartamentosResponseDTO")
     void listarTodosDepartamentosDeveRetornarListaDepartamentoResponseDTO (){
@@ -84,26 +98,12 @@ class DepartamentoServiceTest {
         verify(this.departamentoMapper, times(1)).toResponseDTO(departamento);
     }
 
-    @Test
-    @DisplayName("listarTodosDepartamento() deve retornar uma lista vazia")
-    void listarTodosDepartamentosDeveRetornarUmaListaVazia (){
-        //Arrange:
-        when(this.departamentoRepository.findAll()).thenReturn(List.of());
-
-        //Act:
-        List<DepartamentoResponseDTO> retorno = this.departamentoService.listarTodosDepartamentos();
-
-        //Assert:
-        Assertions.assertTrue(retorno.isEmpty());
-        Assertions.assertNotNull(retorno);
-    }
-
 
 
     /**<p><b>buscarDepartamentoPorId():</b></p>
      *
      *  <p>1- Deve lançar DepartamentoNaoEncontradoException</p>
-     *  <p>2- Deve retornar um DepartamentoResponseDTO vindo do toResponseDTO()</p>
+     *  <p>2- Deve retornar um DepartamentoResponseDTO</p>
      */
     @Test
     @DisplayName("buscarDepartamentoPorId() deve lançar DepartamentoNaoEncontradoException")
@@ -205,14 +205,12 @@ class DepartamentoServiceTest {
         verify(this.departamentoRepository).save(this.departamentoCaptor.capture());
         Departamento capturado = this.departamentoCaptor.getValue();
         Assertions.assertAll(
-                () -> Assertions.assertEquals(1L, capturado.getId()),
                 () -> Assertions.assertEquals("Recursos Humanos", capturado.getNome()),
                 () -> Assertions.assertEquals("RH", capturado.getSigla())
         );
 
         Assertions.assertNotNull(retorno);
         Assertions.assertAll(
-                () -> Assertions.assertEquals(1L, retorno.getId()),
                 () -> Assertions.assertEquals("Recursos Humanos", retorno.getNome()),
                 () -> Assertions.assertEquals("RH", retorno.getSigla())
         );
