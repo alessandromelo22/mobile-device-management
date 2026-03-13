@@ -20,6 +20,7 @@ import com.alessandromelo.repository.ComandoRepository;
 import com.alessandromelo.repository.MetricasDispositivoRepository;
 import org.springframework.stereotype.Service;
 
+import java.time.Clock;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -48,13 +49,16 @@ public class AgenteOperacoesService {
     private MetricasDispositivoRepository metricasDispositivoRepository;
     private EnviarMetricasMapper enviarMetricasMapper;
 
-    public AgenteOperacoesService(AgenteRepository agenteRepository, AtualizarStatusMapper atualizarStatusMapper, ComandoRepository comandoRepository, BuscarComandosPendentesMapper buscarComandosPendentesMapper, MetricasDispositivoRepository metricasDispositivoRepository, EnviarMetricasMapper enviarMetricasMapper) {
+    private Clock clock;
+
+    public AgenteOperacoesService(AgenteRepository agenteRepository, AtualizarStatusMapper atualizarStatusMapper, ComandoRepository comandoRepository, BuscarComandosPendentesMapper buscarComandosPendentesMapper, MetricasDispositivoRepository metricasDispositivoRepository, EnviarMetricasMapper enviarMetricasMapper, Clock clock) {
         this.agenteRepository = agenteRepository;
         this.atualizarStatusMapper = atualizarStatusMapper;
         this.comandoRepository = comandoRepository;
         this.buscarComandosPendentesMapper = buscarComandosPendentesMapper;
         this.metricasDispositivoRepository = metricasDispositivoRepository;
         this.enviarMetricasMapper = enviarMetricasMapper;
+        this.clock = clock;
     }
 
     //PUT
@@ -75,7 +79,7 @@ public class AgenteOperacoesService {
                 .map(agente -> {
 
                     agente.setVersao(requestDTO.getVersao());
-                    agente.setDataUltimaAtividade(LocalDateTime.now()); //setta a data e hora atual da chamada desse endpoint
+                    agente.setDataUltimaAtividade(LocalDateTime.now(this.clock)); //setta a data e hora atual da chamada desse endpoint
 
                     return this.atualizarStatusMapper.toResponseDTO(this.agenteRepository.save(agente));
 
@@ -110,12 +114,11 @@ public class AgenteOperacoesService {
      */
 
     public EnviarMetricasResponseDTO enviarMetricas(Long agenteId, EnviarMetricasRequestDTO requestDTO){
-        //atualizar campo dataUltimaAtividade
 
         Agente agente = this.agenteRepository.findById(agenteId)
                 .map(agente1 -> {
 
-                    agente1.setDataUltimaAtividade(LocalDateTime.now());
+                    agente1.setDataUltimaAtividade(LocalDateTime.now(this.clock));
                     this.agenteRepository.save(agente1);
                     return agente1;
 
