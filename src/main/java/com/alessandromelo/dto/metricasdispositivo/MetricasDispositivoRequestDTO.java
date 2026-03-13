@@ -2,18 +2,19 @@ package com.alessandromelo.dto.metricasdispositivo;
 
 import com.alessandromelo.enums.MetricasTipo;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 
 import java.time.LocalDateTime;
 
 public class MetricasDispositivoRequestDTO {
 
-    @NotBlank(message = "O tipo da Metrica deve ser informado!")
+    @NotNull(message = "O tipo da Metrica deve ser informado!")
     private MetricasTipo tipo;
     @NotBlank(message = "O valor da Metrica deve ser informado!")
     private String valor;
     @NotBlank(message = "A unidade de medida da Metrica deve ser informada!")
     private String unidade;
-    @NotBlank(message = "A data da coleta da Metrica deve ser informada!")
+    @NotNull(message = "A data da coleta da Metrica deve ser informada!")
     private LocalDateTime dataColeta;
 
     private Long agenteId; //FK

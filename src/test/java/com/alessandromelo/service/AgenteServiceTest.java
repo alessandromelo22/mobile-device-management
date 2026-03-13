@@ -35,7 +35,6 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 class AgenteServiceTest {
 
-    @InjectMocks
     private AgenteService agenteService;
 
     @Mock
@@ -56,7 +55,7 @@ class AgenteServiceTest {
     @BeforeEach
     void setUp(){
 
-        agenteService = new AgenteService(this.agenteRepository, this.agenteMapper, this.dispositivoRepository, this.clockFixo);
+        this.agenteService = new AgenteService(this.agenteRepository, this.agenteMapper, this.dispositivoRepository, this.clockFixo);
     }
 
 
