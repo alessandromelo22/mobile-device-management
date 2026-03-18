@@ -12,6 +12,7 @@ import com.alessandromelo.repository.AgenteRepository;
 import com.alessandromelo.repository.ComandoRepository;
 import org.springframework.stereotype.Service;
 
+import java.time.Clock;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -24,11 +25,14 @@ public class ComandoService {
 
     private AgenteRepository agenteRepository;
 
+    private Clock clock;
 
-    public ComandoService(ComandoRepository comandoRepository, ComandoMapper comandoMapper, AgenteRepository agenteRepository) {
+
+    public ComandoService(ComandoRepository comandoRepository, ComandoMapper comandoMapper, AgenteRepository agenteRepository, Clock clock) {
         this.comandoRepository = comandoRepository;
         this.comandoMapper = comandoMapper;
         this.agenteRepository = agenteRepository;
+        this.clock = clock;
     }
 
     //GET
@@ -68,7 +72,7 @@ public class ComandoService {
 
         comando.setAgente(agente);
         comando.setStatus(ComandoStatus.PENDENTE);
-        comando.setDataCriacao(LocalDateTime.now());
+        comando.setDataCriacao(LocalDateTime.now(this.clock));
 
         return this.comandoMapper.toResponseDTO(this.comandoRepository.save(comando));
 
