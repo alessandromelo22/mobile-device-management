@@ -23,10 +23,6 @@ class UsuarioCsvImporterValidatorTest {
 
 
 
-    private static final String[] CABECALHO_ESPERADO = {"Nome", "Email", "Matrícula", "Cargo", "Departamento"};
-
-
-
 
     /**<p><b>validar():</b></p>
      *
@@ -50,7 +46,6 @@ class UsuarioCsvImporterValidatorTest {
         //Assert:
         Assertions.assertThrows(ArquivoNaoEnviadoException.class,
                 () -> this.usuarioCsvImporterValidator.validar(null));
-
     }
 
     @Test
@@ -65,7 +60,6 @@ class UsuarioCsvImporterValidatorTest {
         //Assert:
         Assertions.assertThrows(ArquivoVazioException.class,
                 () -> this.usuarioCsvImporterValidator.validar(file));
-
     }
 
     @Test
@@ -81,7 +75,6 @@ class UsuarioCsvImporterValidatorTest {
         //Assert:
         Assertions.assertThrows(TamanhoDoArquivoExcedidoException.class,
                 () -> this.usuarioCsvImporterValidator.validar(file));
-
     }
 
     @Test
@@ -98,7 +91,6 @@ class UsuarioCsvImporterValidatorTest {
         //Assert:
         Assertions.assertThrows(TipoArquivoInvalidoException.class,
                 () -> this.usuarioCsvImporterValidator.validar(file));
-
     }
 
     @Test
@@ -115,7 +107,6 @@ class UsuarioCsvImporterValidatorTest {
         //Assert:
         Assertions.assertThrows(TipoArquivoInvalidoException.class,
                 () -> this.usuarioCsvImporterValidator.validar(file));
-
     }
 
     @Test
@@ -132,7 +123,6 @@ class UsuarioCsvImporterValidatorTest {
         //Assert:
         Assertions.assertThrows(TipoArquivoInvalidoException.class,
                 () -> this.usuarioCsvImporterValidator.validar(file));
-
     }
 
     @Test
@@ -149,7 +139,6 @@ class UsuarioCsvImporterValidatorTest {
         //Assert:
         Assertions.assertThrows(TipoArquivoInvalidoException.class,
                 () -> this.usuarioCsvImporterValidator.validar(file));
-
     }
 
     @Test
