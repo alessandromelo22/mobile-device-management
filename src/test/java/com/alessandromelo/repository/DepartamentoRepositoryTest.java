@@ -225,18 +225,4 @@ class DepartamentoRepositoryTest {
                 () -> this.testEntityManager.persistAndFlush(dp2));
 
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-    //Testar as Constrainst de Bean Validation e JPA (unique= true, @NotNull, etc..)
 }
