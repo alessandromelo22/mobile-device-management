@@ -29,7 +29,6 @@ class DepartamentoRepositoryTest {
 
 
 //Query Methods
-
     @Test
     @DisplayName("existsByNome deve retornar true")
     void existsByNomeDeveRetornarTrue(){
@@ -37,7 +36,6 @@ class DepartamentoRepositoryTest {
         Departamento departamento = new Departamento();
         departamento.setNome("Recursos Humanos");
         departamento.setSigla("RH");
-
         this.testEntityManager.persistAndFlush(departamento);
 
         //Act:
@@ -66,7 +64,6 @@ class DepartamentoRepositoryTest {
         Departamento departamento = new Departamento();
         departamento.setNome("Recursos Humanos");
         departamento.setSigla("RH");
-
         this.testEntityManager.persistAndFlush(departamento);
 
         //Act:
@@ -95,7 +92,6 @@ class DepartamentoRepositoryTest {
         Departamento departamento = new Departamento();
         departamento.setNome("Recursos Humanos");
         departamento.setSigla("RH");
-
         this.testEntityManager.persistAndFlush(departamento);
 
         //Act:
@@ -113,7 +109,6 @@ class DepartamentoRepositoryTest {
         Departamento departamento = new Departamento();
         departamento.setNome("Recursos Humanos");
         departamento.setSigla("RH");
-
         this.testEntityManager.persistAndFlush(departamento);
 
         //Act:
@@ -131,7 +126,6 @@ class DepartamentoRepositoryTest {
         Departamento departamento = new Departamento();
         departamento.setNome("Recursos Humanos");
         departamento.setSigla("RH");
-
         this.testEntityManager.persistAndFlush(departamento);
 
         //Act:
@@ -148,7 +142,6 @@ class DepartamentoRepositoryTest {
         Departamento departamento = new Departamento();
         departamento.setNome("Recursos Humanos");
         departamento.setSigla("RH");
-
         this.testEntityManager.persistAndFlush(departamento);
 
         //Act:
@@ -166,7 +159,6 @@ class DepartamentoRepositoryTest {
         Departamento departamento = new Departamento();
         departamento.setNome("Recursos Humanos");
         departamento.setSigla("RH");
-
         this.testEntityManager.persistAndFlush(departamento);
 
         //Act:
@@ -191,7 +183,6 @@ class DepartamentoRepositoryTest {
         Departamento dp1 = new Departamento();
         dp1.setNome("Recursos Humanos");
         dp1.setSigla("RH");
-
         this.testEntityManager.persistAndFlush(dp1);
 
         Departamento dp2 = new Departamento();
@@ -212,7 +203,6 @@ class DepartamentoRepositoryTest {
         Departamento dp1 = new Departamento();
         dp1.setNome("Recursos Humanos");
         dp1.setSigla("RH");
-
         this.testEntityManager.persistAndFlush(dp1);
 
         Departamento dp2 = new Departamento();
